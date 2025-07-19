@@ -42,6 +42,16 @@ function World:addComponentToEntity(entity, componentType, component)
     end
 end
 
+function World:removeComponentFromEntity(entity, componentType)
+    entity:removeComponent(componentType)
+    
+    -- Update all systems - they will re-evaluate if entity matches their requirements
+    for _, system in ipairs(self.systems) do
+        system:removeEntity(entity)  -- Remove first
+        system:addEntity(entity)     -- Re-add if it still matches
+    end
+end
+
 function World:removeEntity(entity)
     -- Remove from all systems
     for _, system in ipairs(self.systems) do

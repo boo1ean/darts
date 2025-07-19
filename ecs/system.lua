@@ -102,15 +102,18 @@ function PulseSystem:update(dt)
             local render = entity:getComponent("Render")
             local pulse = entity:getComponent("Pulse")
             
-            pulse.time = pulse.time + dt
-            
-            -- Calculate pulsing size using sine wave
-            local pulseValue = math.sin(pulse.time * pulse.speed * math.pi * 2)
-            local pulseRatio = (pulseValue + 1) / 2  -- Convert from [-1,1] to [0,1]
-            
-            -- Interpolate between minimum and maximum size
-            local minSize = pulse.maxSize * pulse.minRatio
-            render.size = minSize + (pulse.maxSize - minSize) * pulseRatio
+            -- Safety check: only process if both components exist
+            if render and pulse then
+                pulse.time = pulse.time + dt
+                
+                -- Calculate pulsing size using sine wave
+                local pulseValue = math.sin(pulse.time * pulse.speed * math.pi * 2)
+                local pulseRatio = (pulseValue + 1) / 2  -- Convert from [-1,1] to [0,1]
+                
+                -- Interpolate between minimum and maximum size
+                local minSize = pulse.maxSize * pulse.minRatio
+                render.size = minSize + (pulse.maxSize - minSize) * pulseRatio
+            end
         end
     end
 end
@@ -139,12 +142,17 @@ function TargetGenerationSystem:update(dt)
     for _, entity in ipairs(self.entities) do
         if entity.active then
             local movement = entity:getComponent("Movement")
+            local circular = entity:getComponent("CircularMovement")
+            local linear = entity:getComponent("LinearMovement")
             
-            movement.moveTime = movement.moveTime + dt
-            
-            if movement.moveTime >= movement.moveDuration then
-                self:generateNewTargets(entity)
-                movement.moveTime = 0
+            -- Safety check: only process if all components exist
+            if movement and circular and linear then
+                movement.moveTime = movement.moveTime + dt
+                
+                if movement.moveTime >= movement.moveDuration then
+                    self:generateNewTargets(entity)
+                    movement.moveTime = 0
+                end
             end
         end
     end
@@ -202,15 +210,21 @@ local CombinedMovementSystem = System.new("CombinedMovementSystem", {"Transform"
 function CombinedMovementSystem:update(dt)
     for _, entity in ipairs(self.entities) do
         if entity.active then
+            local transform = entity:getComponent("Transform")
+            local circular = entity:getComponent("CircularMovement")
+            local linear = entity:getComponent("LinearMovement")
             local movement = entity:getComponent("Movement")
             
-            -- Update transition progress
-            if movement.transitionProgress < 1 then
-                movement.transitionProgress = movement.transitionProgress + dt / 0.5
-                movement.transitionProgress = math.min(movement.transitionProgress, 1)
+            -- Safety check: only process if all components exist
+            if transform and circular and linear and movement then
+                -- Update transition progress
+                if movement.transitionProgress < 1 then
+                    movement.transitionProgress = movement.transitionProgress + dt / 0.5
+                    movement.transitionProgress = math.min(movement.transitionProgress, 1)
+                end
+                
+                self:updateCombinedMovement(entity, dt)
             end
-            
-            self:updateCombinedMovement(entity, dt)
         end
     end
 end
@@ -293,6 +307,143 @@ function CombinedMovementSystem:updateCombinedMovement(entity, dt)
     transform.y = circleY * 0.7 + linearY * 0.3
 end
 
+-- Timer System (for delayed actions)
+local TimerSystem = System.new("TimerSystem", {"Timer"})
+function TimerSystem:init(world)
+    self.world = world  -- Store reference to world for adding components
+end
+
+function TimerSystem:update(dt)
+    for _, entity in ipairs(self.entities) do
+        if entity.active then
+            local timer = entity:getComponent("Timer")
+            
+            if timer and not timer.triggered then
+                timer.time = timer.time + dt
+                
+                -- Debug: Print timer progress every 0.5 seconds
+                if math.floor(timer.time * 2) > math.floor((timer.time - dt) * 2) then
+                    print("Timer for entity", entity.id, ":", timer.time, "/", timer.delay, "->", timer.componentType)
+                end
+                
+                if timer.time >= timer.delay then
+                    print("Timer completed for entity", entity.id, "- adding component:", timer.componentType)
+                    
+                    -- Add the component directly
+                    if timer.component and timer.componentType then
+                        if self.world then
+                            self.world:addComponentToEntity(entity, timer.componentType, timer.component)
+                            print("Timer added", timer.componentType, "component to entity", entity.id, "via world")
+                        else
+                            entity:addComponent(timer.componentType, timer.component)
+                            print("Timer added", timer.componentType, "component to entity", entity.id, "direct")
+                        end
+                        
+                        -- Verify the component was added
+                        if entity:hasComponent(timer.componentType) then
+                            print(timer.componentType, "component successfully added to entity", entity.id)
+                        else
+                            print("ERROR:", timer.componentType, "component NOT added to entity", entity.id)
+                        end
+                    else
+                        print("ERROR: Invalid component or componentType in timer for entity", entity.id)
+                    end
+                    
+                    -- Mark as triggered and remove timer
+                    timer.triggered = true
+                    if self.world then
+                        self.world:removeComponentFromEntity(entity, "Timer")
+                    else
+                        entity:removeComponent("Timer")
+                    end
+                end
+            end
+        end
+    end
+end
+
+-- Per-Entity Shake System
+local ShakeSystem = System.new("ShakeSystem", {"Transform", "Shake"})
+function ShakeSystem:update(dt)
+    for _, entity in ipairs(self.entities) do
+        if entity.active then
+            local transform = entity:getComponent("Transform")
+            local shake = entity:getComponent("Shake")
+            
+            if transform and shake then
+                if shake.time > 0 then
+                    -- Store original position if not already stored
+                    if shake.originalX == nil then
+                        shake.originalX = transform.x
+                        shake.originalY = transform.y
+                    end
+                    
+                    shake.time = shake.time - dt
+                    
+                    -- Calculate shake intensity based on remaining time (fade out)
+                    local intensity = (shake.time / shake.duration) * shake.intensity
+                    
+                    -- Random shake offset
+                    shake.shakeX = (math.random() - 0.5) * 2 * intensity
+                    shake.shakeY = (math.random() - 0.5) * 2 * intensity
+                    
+                    -- Apply shake to transform
+                    transform.x = shake.originalX + shake.shakeX
+                    transform.y = shake.originalY + shake.shakeY
+                    
+                    -- Stop shaking and restore original position when time is up
+                    if shake.time <= 0 then
+                        transform.x = shake.originalX
+                        transform.y = shake.originalY
+                        -- Remove the shake component when done
+                        entity:removeComponent("Shake")
+                    end
+                end
+            end
+        end
+    end
+end
+
+-- Screen Shake System (for global screen shake)
+local ScreenShakeSystem = System.new("ScreenShakeSystem", {})
+function ScreenShakeSystem:init()
+    self.shakeTime = 0
+    self.shakeDuration = 0.15
+    self.shakeIntensity = 5
+    self.shakeX = 0
+    self.shakeY = 0
+end
+
+function ScreenShakeSystem:update(dt)
+    if self.shakeTime > 0 then
+        self.shakeTime = self.shakeTime - dt
+        
+        -- Calculate shake intensity based on remaining time (fade out)
+        local intensity = (self.shakeTime / self.shakeDuration) * self.shakeIntensity
+        
+        -- Random shake offset
+        self.shakeX = (math.random() - 0.5) * 2 * intensity
+        self.shakeY = (math.random() - 0.5) * 2 * intensity
+        
+        -- Stop shaking when time is up
+        if self.shakeTime <= 0 then
+            self.shakeX = 0
+            self.shakeY = 0
+        end
+    end
+end
+
+function ScreenShakeSystem:triggerShake()
+    self.shakeTime = self.shakeDuration
+end
+
+function ScreenShakeSystem:getShakeOffset()
+    return self.shakeX, self.shakeY
+end
+
+-- Initialize the shake system
+ScreenShakeSystem:init()
+
 -- Render System
 local RenderSystem = System.new("RenderSystem", {"Transform", "Render"})
 function RenderSystem:update(dt)
@@ -329,5 +480,8 @@ return {
     CircularMovementSystem = CircularMovementSystem,
     CombinedMovementSystem = CombinedMovementSystem,
     TargetGenerationSystem = TargetGenerationSystem,
+    TimerSystem = TimerSystem,
+    ShakeSystem = ShakeSystem,
+    ScreenShakeSystem = ScreenShakeSystem,
     RenderSystem = RenderSystem
 } 

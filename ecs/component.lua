@@ -103,11 +103,44 @@ function LinearMovementComponent.new(targetX, targetY)
     return self
 end
 
+-- Shake Component
+local Shake = {}
+Shake.__index = Shake
+
+function Shake.new(duration, intensity)
+    local self = setmetatable({}, Shake)
+    self.duration = duration or 0.3
+    self.intensity = intensity or 10
+    self.time = 0
+    self.shakeX = 0
+    self.shakeY = 0
+    self.originalX = nil  -- Will store original position
+    self.originalY = nil
+    return self
+end
+
+-- Timer Component (for delayed actions)
+local Timer = {}
+Timer.__index = Timer
+
+function Timer.new(delay, componentType, component)
+    local self = setmetatable({}, Timer)
+    self.delay = delay or 1.0
+    self.time = 0
+    self.componentType = componentType  -- e.g., "Shake", "Movement", etc.
+    self.component = component          -- The actual component instance to add
+    self.triggered = false
+    return self
+end
+
+-- Export all components
 return {
     Transform = TransformComponent,
     Render = RenderComponent,
     Movement = MovementComponent,
     Pulse = PulseComponent,
     CircularMovement = CircularMovementComponent,
-    LinearMovement = LinearMovementComponent
+    LinearMovement = LinearMovementComponent,
+    Shake = Shake,
+    Timer = Timer
 } 
