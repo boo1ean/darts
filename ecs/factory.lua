@@ -18,6 +18,7 @@ function EntityFactory.createPulsingDot(world, x, y)
     local pulse = Components.Pulse.new(0.3, 0.1, 10)
     local circular = Components.CircularMovement.new(80, x, y, 0)  -- Increased radius from 50 to 80
     local linear = Components.LinearMovement.new(x, y)
+    local cosine = Components.CosineMovement.new()  -- Random parameters by default
     
     -- Use the new method to add components
     world:addComponentToEntity(entity, "Transform", transform)
@@ -26,6 +27,7 @@ function EntityFactory.createPulsingDot(world, x, y)
     world:addComponentToEntity(entity, "Pulse", pulse)
     world:addComponentToEntity(entity, "CircularMovement", circular)
     world:addComponentToEntity(entity, "LinearMovement", linear)
+    world:addComponentToEntity(entity, "CosineMovement", cosine)
     
     -- Set initial targets for movement
     local movementComp = entity:getComponent("Movement")
@@ -83,6 +85,40 @@ function EntityFactory.createStaticPulsingDot(world, x, y)
     entity:addComponent("Transform", Components.Transform.new(x, y))
     entity:addComponent("Render", Components.Render.new({1, 1, 0, 1}, 12, "circle"))
     entity:addComponent("Pulse", Components.Pulse.new(2, 0.2, 12))
+    
+    return entity
+end
+
+-- Create a dart board entity
+function EntityFactory.createDartBoard(world, image)
+    local entity = world:createEntity()
+    
+    -- Get window and image dimensions
+    local windowWidth = love.graphics.getWidth()
+    local windowHeight = love.graphics.getHeight()
+    local imageWidth = image:getWidth()
+    local imageHeight = image:getHeight()
+    
+    -- Calculate scale to fit image within window while maintaining aspect ratio
+    local scaleX = windowWidth / imageWidth
+    local scaleY = windowHeight / imageHeight
+    local scale = math.min(scaleX, scaleY)
+    
+    -- Calculate centered position
+    local scaledWidth = imageWidth * scale
+    local scaledHeight = imageHeight * scale
+    local centerX = windowWidth / 2
+    local centerY = windowHeight / 2
+    
+    -- Create components
+    local transform = Components.Transform.new(centerX, centerY)
+    local imageComponent = Components.Image.new(image, imageWidth, imageHeight)
+    imageComponent.scaleX = scale
+    imageComponent.scaleY = scale
+    
+    -- Add components to entity
+    world:addComponentToEntity(entity, "Transform", transform)
+    world:addComponentToEntity(entity, "Image", imageComponent)
     
     return entity
 end
