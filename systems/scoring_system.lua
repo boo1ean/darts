@@ -5,13 +5,12 @@ local System = require('ecs.base_system')
 local Components = require('ecs.component')
 local DartBoardBehavior = require('behaviors.dartboard_behavior')
 
--- Scoring System
-local ScoringSystem = System.new("ScoringSystem", {})
+-- Scoring System - processes entities with Hit components
+local ScoringSystem = System.new("ScoringSystem", {"Transform", "Hit"})
 
 function ScoringSystem:init(world)
     self.world = world
-    self.totalScore = 0
-    self.hitCount = 0
+    -- Stats are now stored in world.gameState for ECS-compliant access
 end
 
 -- Calculate points based on distance from center
@@ -77,12 +76,12 @@ function ScoringSystem:createScoreText(x, y, points, distanceFromCenter)
     self.world:addComponentToEntity(entity, "Text", text)
     self.world:addComponentToEntity(entity, "Score", score)
     
-    -- Update total score
+    -- Update total score in world game state
     if points > 0 then
-        self.totalScore = self.totalScore + points
-        self.hitCount = self.hitCount + 1
+        self.world.gameState.totalScore = self.world.gameState.totalScore + points
+        self.world.gameState.hitCount = self.world.gameState.hitCount + 1
         print(string.format("HIT! %d points (%.1f pixels from center) - Total: %d points", 
-              points, distanceFromCenter, self.totalScore))
+              points, distanceFromCenter, self.world.gameState.totalScore))
     else
         print(string.format("MISS! (%.1f pixels from center)", distanceFromCenter))
     end
@@ -90,8 +89,47 @@ function ScoringSystem:createScoreText(x, y, points, distanceFromCenter)
     return entity
 end
 
--- Score a hit at the given position
-function ScoringSystem:scoreHit(x, y)
+
+
+-- Get current scoring statistics
+function ScoringSystem:getStats()
+    return {
+        totalScore = self.world.gameState.totalScore,
+        hitCount = self.world.gameState.hitCount,
+        averageScore = self.world.gameState.hitCount > 0 and (self.world.gameState.totalScore / self.world.gameState.hitCount) or 0
+    }
+end
+
+-- Reset scoring statistics
+function ScoringSystem:reset()
+    self.world.gameState.totalScore = 0
+    self.world.gameState.hitCount = 0
+    print("Score reset!")
+end
+
+function ScoringSystem:update(dt)
+    -- Process all entities with Hit components
+    for _, entity in ipairs(self.entities) do
+        if entity.active then
+            local transform = entity:getComponent("Transform")
+            local hit = entity:getComponent("Hit")
+            
+            if transform and hit and not hit.processed then
+                -- Mark as processed to avoid double-scoring
+                hit.processed = true
+                
+                -- Calculate score for this hit
+                self:processHit(entity, transform.x, transform.y)
+                
+                -- Remove the Hit component after processing
+                self.world:removeComponentFromEntity(entity, "Hit")
+            end
+        end
+    end
+end
+
+-- Process a hit at the given position (internal method)
+function ScoringSystem:processHit(entity, x, y)
     -- Get dartboard center
     local centerX, centerY = DartBoardBehavior.getCenterFromWorld(self.world)
     
@@ -105,27 +143,6 @@ function ScoringSystem:scoreHit(x, y)
     
     -- Create visual score display
     return self:createScoreText(x, y, points, distance)
-end
-
--- Get current scoring statistics
-function ScoringSystem:getStats()
-    return {
-        totalScore = self.totalScore,
-        hitCount = self.hitCount,
-        averageScore = self.hitCount > 0 and (self.totalScore / self.hitCount) or 0
-    }
-end
-
--- Reset scoring statistics
-function ScoringSystem:reset()
-    self.totalScore = 0
-    self.hitCount = 0
-    print("Score reset!")
-end
-
-function ScoringSystem:update(dt)
-    -- This system doesn't need regular updates
-    -- Score entities are managed by other systems
 end
 
 return ScoringSystem 

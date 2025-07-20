@@ -13,6 +13,11 @@ function World.new()
     self.entities = {}
     self.systems = {}
     self.nextEntityId = 1
+    -- Global game state storage for ECS-compliant data access
+    self.gameState = {
+        totalScore = 0,
+        hitCount = 0
+    }
     return self
 end
 

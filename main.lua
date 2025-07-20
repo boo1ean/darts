@@ -49,12 +49,12 @@ function love.load()
     Systems.ScoringSystem:init(gameWorld)
     gameWorld:addSystem(Systems.ScoringSystem)
     
-    -- Initialize TextSystem with world reference  
-    Systems.TextSystem:init(gameWorld)
-    gameWorld:addSystem(Systems.TextSystem)
-    
     gameWorld:addSystem(Systems.ShakeSystem)
     gameWorld:addSystem(Systems.RenderSystem)
+    
+    -- Initialize TextSystem with world reference and add it LAST for top rendering
+    Systems.TextSystem:init(gameWorld)
+    gameWorld:addSystem(Systems.TextSystem)
     print("All systems added to world")
     
     -- Create dart board entity
@@ -85,11 +85,8 @@ function love.update(dt)
 end
 
 function love.draw()
-    -- Render all ECS entities (including dart board and dots)
+    -- Render all ECS entities (including dart board, dots, and text)
     gameWorld:render()
-    
-    -- Render text separately since it has custom rendering logic
-    Systems.TextSystem:render()
 end
 
 function love.keypressed(key)

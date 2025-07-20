@@ -15,6 +15,7 @@ local Timer = require('components.timer_component')
 local Image = require('components.image_component')
 local Text = require('components.text_component')
 local Score = require('components.score_component')
+local Hit = require('components.hit_component')
 
 -- Export all components
 return {
@@ -29,5 +30,6 @@ return {
     Timer = Timer,
     Image = Image,
     Text = Text,
-    Score = Score
+    Score = Score,
+    Hit = Hit
 } 
