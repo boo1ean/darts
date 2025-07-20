@@ -13,6 +13,8 @@ local CosineMovementComponent = require('components.cosine_movement_component')
 local Shake = require('components.shake_component')
 local Timer = require('components.timer_component')
 local Image = require('components.image_component')
+local Text = require('components.text_component')
+local Score = require('components.score_component')
 
 -- Export all components
 return {
@@ -25,5 +27,7 @@ return {
     CosineMovement = CosineMovementComponent,
     Shake = Shake,
     Timer = Timer,
-    Image = Image
+    Image = Image,
+    Text = Text,
+    Score = Score
 } 

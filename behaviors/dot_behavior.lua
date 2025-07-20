@@ -47,9 +47,10 @@ function DotBehavior.addDelayedShake(world, entity, delay, duration, intensity)
     print("Added delayed shake timer to entity", entity.id, "- will shake in", delay, "seconds")
 end
 
--- Stop all moving dots in the world that match criteria
+-- Stop all moving dots in the world that match criteria and create score displays
 function DotBehavior.stopAllMovingDots(world)
     local stoppedCount = 0
+    local Systems = require('ecs.system')
     
     for _, entity in ipairs(world.entities) do
         local movement = entity:getComponent("Movement")
@@ -58,6 +59,12 @@ function DotBehavior.stopAllMovingDots(world)
                 stoppedCount = stoppedCount + 1
                 -- Add delayed shake to each stopped dot
                 DotBehavior.addDelayedShake(world, entity)
+                
+                -- Create score display for this hit
+                local transform = entity:getComponent("Transform")
+                if transform then
+                    Systems.ScoringSystem:scoreHit(transform.x, transform.y)
+                end
             end
         end
     end

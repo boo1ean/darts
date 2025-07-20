@@ -11,6 +11,8 @@ local TargetGenerationSystem = require('systems.target_generation_system')
 local TimerSystem = require('systems.timer_system')
 local ShakeSystem = require('systems.shake_system')
 local RenderSystem = require('systems.render_system')
+local TextSystem = require('systems.text_system')
+local ScoringSystem = require('systems.scoring_system')
 
 -- Export all systems
 return {
@@ -21,5 +23,7 @@ return {
     TargetGenerationSystem = TargetGenerationSystem,
     TimerSystem = TimerSystem,
     ShakeSystem = ShakeSystem,
-    RenderSystem = RenderSystem
+    RenderSystem = RenderSystem,
+    TextSystem = TextSystem,
+    ScoringSystem = ScoringSystem
 } 

@@ -55,7 +55,11 @@ end
 -- Print game statistics
 function GameBehavior.printStats(world)
     local stats = GameBehavior.getStats(world)
+    local Systems = require('ecs.system')
+    local scoreStats = Systems.ScoringSystem:getStats()
+    
     print("Game Stats: Moving =", stats.movingDots, "Stopped =", stats.stoppedDots, "Total =", stats.totalDots, "Dart Board =", stats.dartBoard)
+    print("Score Stats: Total =", scoreStats.totalScore, "Hits =", scoreStats.hitCount, "Average =", math.floor(scoreStats.averageScore * 10) / 10)
 end
 
 return GameBehavior 
