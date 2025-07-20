@@ -5,7 +5,7 @@
 -- Load ECS modules
 local World = require('ecs.world')
 local Systems = require('ecs.system')
-local EntityFactory = require('ecs.factory')
+local EntityFactory = require('factories')
 
 -- Load behavior modules
 local GameBehavior = require('behaviors.game_behavior')

@@ -38,11 +38,13 @@ function RenderSystem:render()
                 -- Render images
                 love.graphics.setColor(1, 1, 1, 1)  -- Ensure white color for images
                 
-                -- Calculate draw position (centered)
-                local drawX = transform.x - (image.width * image.scaleX) / 2
-                local drawY = transform.y - (image.height * image.scaleY) / 2
+                -- Draw image centered at transform position with rotation around center
+                -- Use offset parameters to rotate around center instead of top-left corner
+                local offsetX = image.width / 2
+                local offsetY = image.height / 2
                 
-                love.graphics.draw(image.image, drawX, drawY, transform.rotation or 0, image.scaleX, image.scaleY)
+                love.graphics.draw(image.image, transform.x, transform.y, transform.rotation or 0, 
+                                 image.scaleX, image.scaleY, offsetX, offsetY)
             end
         end
     end

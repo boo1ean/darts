@@ -3,7 +3,7 @@
 -- =============================================================================
 local DotBehavior = require('behaviors.dot_behavior')
 local DartBoardBehavior = require('behaviors.dartboard_behavior')
-local EntityFactory = require('ecs.factory')
+local EntityFactory = require('factories')
 
 local GameBehavior = {}
 
@@ -11,13 +11,16 @@ local GameBehavior = {}
 function GameBehavior.throwDart(world, dartBoardEntity)
     print("=== DART THROW ===")
     
-    -- 1. Shake the dart board
+    -- 1. Shake the dart board (immediate visual feedback)
     DartBoardBehavior.shake(world, dartBoardEntity)
     
-    -- 2. Stop all moving dots
+    -- 2. Apply permanent tilt/rotation to simulate authentic impact
+    DartBoardBehavior.tiltBoard(world, dartBoardEntity)
+    
+    -- 3. Stop all moving dots
     local stoppedCount = DotBehavior.stopAllMovingDots(world)
     
-    -- 3. Spawn a new moving dot if we stopped any dots
+    -- 4. Spawn a new moving dot if we stopped any dots
     if stoppedCount > 0 then
         GameBehavior.spawnNewDot(world)
     else

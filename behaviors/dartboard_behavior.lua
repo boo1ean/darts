@@ -151,11 +151,65 @@ function DartBoardBehavior.checkCenterPass(world, entity)
     return false
 end
 
+-- Add permanent tilt/rotation to dart board entity from impact
+function DartBoardBehavior.tiltBoard(world, dartBoardEntity, maxTiltAngle, maxTiltOffset)
+    if not dartBoardEntity then
+        print("Warning: No dart board entity provided for tilting")
+        return false
+    end
+    
+    maxTiltAngle = maxTiltAngle or 0.08  -- Maximum rotation in radians (~4.5 degrees)
+    maxTiltOffset = maxTiltOffset or 3   -- Maximum position offset in pixels
+    
+    local transform = dartBoardEntity:getComponent("Transform")
+    if not transform then
+        print("Warning: Dart board has no transform component")
+        return false
+    end
+    
+    -- Generate random tilt rotation (can be positive or negative)
+    local tiltRotation = (math.random() - 0.5) * 2 * maxTiltAngle
+    
+    -- Generate small random position offset to simulate impact displacement
+    local offsetX = (math.random() - 0.5) * 2 * maxTiltOffset
+    local offsetY = (math.random() - 0.5) * 2 * maxTiltOffset
+    
+    -- Apply the tilt (accumulate with existing rotation)
+    transform.rotation = (transform.rotation or 0) + tiltRotation
+    transform.x = transform.x + offsetX
+    transform.y = transform.y + offsetY
+    
+    -- Clamp rotation to prevent excessive tilting (±15 degrees max)
+    local maxTotalRotation = math.rad(15)
+    if transform.rotation > maxTotalRotation then
+        transform.rotation = maxTotalRotation
+    elseif transform.rotation < -maxTotalRotation then
+        transform.rotation = -maxTotalRotation
+    end
+    
+    local angleDegrees = math.deg(tiltRotation)
+    print(string.format("Tilted dart board by %.2f degrees, total rotation: %.2f degrees, offset: (%.1f, %.1f)", 
+          angleDegrees, math.deg(transform.rotation), offsetX, offsetY))
+    
+    return true
+end
+
 -- Shake the dart board if it exists in the world
 function DartBoardBehavior.shakeIfExists(world, duration, intensity)
     local dartBoard = DartBoardBehavior.findDartBoard(world)
     if dartBoard then
         return DartBoardBehavior.shake(world, dartBoard, duration, intensity)
+    else
+        print("Warning: No dart board found in world")
+        return false
+    end
+end
+
+-- Tilt the dart board if it exists in the world
+function DartBoardBehavior.tiltIfExists(world, maxTiltAngle, maxTiltOffset)
+    local dartBoard = DartBoardBehavior.findDartBoard(world)
+    if dartBoard then
+        return DartBoardBehavior.tiltBoard(world, dartBoard, maxTiltAngle, maxTiltOffset)
     else
         print("Warning: No dart board found in world")
         return false

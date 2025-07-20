@@ -1,12 +1,12 @@
 -- =============================================================================
--- ENTITY FACTORY
+-- DOT FACTORY - Creates various types of dot entities
 -- =============================================================================
 local Components = require('ecs.component')
 
-local EntityFactory = {}
+local DotFactory = {}
 
 -- Create a pulsing dot with combined movement
-function EntityFactory.createPulsingDot(world, x, y)
+function DotFactory.createPulsingDot(world, x, y)
     local entity = world:createEntity()
     
     -- Add components with proper initial values
@@ -59,7 +59,7 @@ function EntityFactory.createPulsingDot(world, x, y)
 end
 
 -- Create a simple moving dot
-function EntityFactory.createMovingDot(world, x, y)
+function DotFactory.createMovingDot(world, x, y)
     local entity = world:createEntity()
     
     entity:addComponent("Transform", Components.Transform.new(x, y))
@@ -70,7 +70,7 @@ function EntityFactory.createMovingDot(world, x, y)
 end
 
 -- Create a circular moving dot
-function EntityFactory.createCircularDot(world, x, y)
+function DotFactory.createCircularDot(world, x, y)
     local entity = world:createEntity()
     
     entity:addComponent("Transform", Components.Transform.new(x, y))
@@ -81,7 +81,7 @@ function EntityFactory.createCircularDot(world, x, y)
 end
 
 -- Create a pulsing dot without movement
-function EntityFactory.createStaticPulsingDot(world, x, y)
+function DotFactory.createStaticPulsingDot(world, x, y)
     local entity = world:createEntity()
     
     entity:addComponent("Transform", Components.Transform.new(x, y))
@@ -91,38 +91,4 @@ function EntityFactory.createStaticPulsingDot(world, x, y)
     return entity
 end
 
--- Create a dart board entity
-function EntityFactory.createDartBoard(world, image)
-    local entity = world:createEntity()
-    
-    -- Get window and image dimensions
-    local windowWidth = love.graphics.getWidth()
-    local windowHeight = love.graphics.getHeight()
-    local imageWidth = image:getWidth()
-    local imageHeight = image:getHeight()
-    
-    -- Calculate scale to fit image within window while maintaining aspect ratio
-    local scaleX = windowWidth / imageWidth
-    local scaleY = windowHeight / imageHeight
-    local scale = math.min(scaleX, scaleY)
-    
-    -- Calculate centered position
-    local scaledWidth = imageWidth * scale
-    local scaledHeight = imageHeight * scale
-    local centerX = windowWidth / 2
-    local centerY = windowHeight / 2
-    
-    -- Create components
-    local transform = Components.Transform.new(centerX, centerY)
-    local imageComponent = Components.Image.new(image, imageWidth, imageHeight)
-    imageComponent.scaleX = scale
-    imageComponent.scaleY = scale
-    
-    -- Add components to entity
-    world:addComponentToEntity(entity, "Transform", transform)
-    world:addComponentToEntity(entity, "Image", imageComponent)
-    
-    return entity
-end
-
-return EntityFactory 
+return DotFactory 
