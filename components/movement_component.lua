@@ -14,7 +14,7 @@ function MovementComponent.new(speed, movementType)
     self.targetX = 0
     self.targetY = 0
     self.moveTime = 0
-    self.moveDuration = 3
+    self.moveDuration = 1.5  -- Much faster cycles (was 3)
     self.transitionProgress = 0
     self.stopped = false  -- Flag to disable movement without removing component
     self.startX = nil  -- Starting position for center-passing movement

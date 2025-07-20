@@ -11,8 +11,12 @@ function ShakeSystem:update(dt)
         if entity.active then
             local transform = entity:getComponent("Transform")
             local shake = entity:getComponent("Shake")
+            local movement = entity:getComponent("Movement")
             
-            if transform and shake then
+            -- Only shake if entity doesn't have movement OR movement is stopped
+            local shouldShake = not movement or movement.stopped
+            
+            if transform and shake and shouldShake then
                 if shake.time > 0 then
                     -- Store original position if not already stored
                     if shake.originalX == nil then

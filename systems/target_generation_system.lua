@@ -67,9 +67,9 @@ function TargetGenerationSystem:generateNewTargets(entity)
     linear.targetX = minX + math.random() * (maxX - minX)
     linear.targetY = minY + math.random() * (maxY - minY)
     
-    print("Entity", entity.id, "- new random targets generated with cosine wave (center passage guaranteed by movement)")
+    print("Entity", entity.id, "- AGGRESSIVE FAST targets! Duration:", string.format("%.1f", movement.moveDuration), "s - EXTREME X-Path Factor:", string.format("%.1f", cosine.factor))
     
-    movement.moveDuration = 3 + (math.random() - 0.5) * 1
+    movement.moveDuration = 1 + math.random() * 1  -- Random 1-2 seconds (was 2.5-3.5)
     movement.transitionProgress = 0
     
     -- Reset start position for new movement cycle

@@ -14,11 +14,13 @@ function EntityFactory.createPulsingDot(world, x, y)
     
     local transform = Components.Transform.new(x, y)
     local render = Components.Render.new({1, 0, 0, 1}, 10, "circle")
-    local movement = Components.Movement.new(500, "combined")
-    local pulse = Components.Pulse.new(0.3, 0.1, 10)
+    local movement = Components.Movement.new(800, "combined")  -- Much faster (was 500)
+    local pulse = Components.Pulse.new(0.2, 0.1, 10)  -- Smooth, gentle pulsing (reduced from 1.5)
     local circular = Components.CircularMovement.new(80, x, y, 0)  -- Increased radius from 50 to 80
     local linear = Components.LinearMovement.new(x, y)
-    local cosine = Components.CosineMovement.new()  -- Random parameters by default
+    -- Create cosine movement with AGGRESSIVE factor for EXTREME variety
+    local randomFactor = 0.1 + math.random() * 2.9  -- Random 0.1-3.0 for EXTREME factor variety
+    local cosine = Components.CosineMovement.new(nil, nil, nil, nil, nil, nil, randomFactor)
     
     -- Use the new method to add components
     world:addComponentToEntity(entity, "Transform", transform)
@@ -84,7 +86,7 @@ function EntityFactory.createStaticPulsingDot(world, x, y)
     
     entity:addComponent("Transform", Components.Transform.new(x, y))
     entity:addComponent("Render", Components.Render.new({1, 1, 0, 1}, 12, "circle"))
-    entity:addComponent("Pulse", Components.Pulse.new(2, 0.2, 12))
+    entity:addComponent("Pulse", Components.Pulse.new(0.15, 0.2, 12))  -- Smooth, gentle pulsing for dart board
     
     return entity
 end

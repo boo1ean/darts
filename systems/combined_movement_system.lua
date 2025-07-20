@@ -23,12 +23,13 @@ function CombinedMovementSystem:update(dt)
             
             -- Safety check: only process if all components exist and movement is not stopped
             if transform and circular and linear and cosine and movement and not movement.stopped then
-                -- Update transition progress
+                -- Update transition progress - SMOOTH TRANSITIONS
                 if movement.transitionProgress < 1 then
-                    movement.transitionProgress = movement.transitionProgress + dt / 0.5
+                    movement.transitionProgress = movement.transitionProgress + dt / 0.4   -- Smooth 0.4s transitions
                     movement.transitionProgress = math.min(movement.transitionProgress, 1)
                 end
                 
+                -- Smooth and stable movement timing
                 self:updateCombinedMovement(entity, dt)
                 
                 -- Debug: Check if entity is passing through center
@@ -73,7 +74,7 @@ function CombinedMovementSystem:generateNewTargets(entity)
     linear.targetX = minX + math.random() * (maxX - minX)
     linear.targetY = minY + math.random() * (maxY - minY)
     
-    movement.moveDuration = 3 + (math.random() - 0.5) * 1
+    movement.moveDuration = 1 + math.random() * 1  -- Random 1-2 seconds (was 2.5-3.5)
     movement.transitionProgress = 0
     
     -- Reset start position for new movement cycle
@@ -97,7 +98,7 @@ function CombinedMovementSystem:updateCombinedMovement(entity, dt)
     -- Calculate movement progress (0 to 1)
     local progress = movement.moveTime / movement.moveDuration
     
-    -- Update cosine time for wave calculations
+    -- Update cosine time for wave calculations - SMOOTH AND STABLE
     cosine.time = cosine.time + dt
     
     -- Store the starting position when movement begins
@@ -122,21 +123,41 @@ function CombinedMovementSystem:updateCombinedMovement(entity, dt)
     endX = circularEndX * 0.5 + currentTargetX * 0.5
     endY = circularEndY * 0.5 + currentTargetY * 0.5
     
-    -- GUARANTEE center passage with two-phase movement:
-    -- Phase 1 (0.0 to 0.5): Start → Center
-    -- Phase 2 (0.5 to 1.0): Center → End
+    -- GUARANTEE center passage with two-phase movement + CHAOS:
+    -- Phase 1 (0.0 to 0.5): Start → Center (with chaos)
+    -- Phase 2 (0.5 to 1.0): Center → End (with chaos)
     local baseX, baseY
+    
+    -- Calculate cosine factor first for use in path calculations
+    local currentFactor = cosine.previousFactor + (cosine.factor - cosine.previousFactor) * movement.transitionProgress
+    
+    -- Add AGGRESSIVE curves for dramatic, organic paths with FACTOR influence
+    local baseCurveIntensity = 5   -- Increased base curve intensity (was 3)
+    local factorCurveIntensity = baseCurveIntensity * currentFactor  -- Make curve intensity factor-dependent
+    local curveX = math.sin(progress * math.pi * 2) * factorCurveIntensity  -- X curve HEAVILY affected by factor
+    local curveY = math.cos(progress * math.pi * 1.5) * factorCurveIntensity * 0.6  -- Y curve also affected but less
+    
     if progress <= 0.5 then
-        -- First half: interpolate from start to center
+        -- First half: interpolate from start to center with smooth curves
         local phase1Progress = progress * 2  -- 0 to 1
-        baseX = movement.startX + (centerX - movement.startX) * phase1Progress
-        baseY = movement.startY + (centerY - movement.startY) * phase1Progress
+        -- Add smooth easing for fluid motion
+        local easedProgress = phase1Progress * phase1Progress * (3.0 - 2.0 * phase1Progress)  -- Smoothstep
+        baseX = movement.startX + (centerX - movement.startX) * easedProgress + curveX
+        baseY = movement.startY + (centerY - movement.startY) * easedProgress + curveY
     else
-        -- Second half: interpolate from center to end
+        -- Second half: interpolate from center to end with smooth curves
         local phase2Progress = (progress - 0.5) * 2  -- 0 to 1
-        baseX = centerX + (endX - centerX) * phase2Progress
-        baseY = centerY + (endY - centerY) * phase2Progress
+        -- Add smooth acceleration for fluid movement
+        local easedProgress = phase2Progress * phase2Progress * (3.0 - 2.0 * phase2Progress)  -- Smoothstep
+        baseX = centerX + (endX - centerX) * easedProgress + curveX
+        baseY = centerY + (endY - centerY) * easedProgress + curveY
     end
+    
+    -- Apply AGGRESSIVE factor to X coordinate path for EXTREME movement patterns
+    -- Factor 0.1 = ultra-narrow paths (-54px deviation), Factor 3.0 = ultra-wide paths (+120px deviation)
+    local pathFactorInfluence = 60  -- AGGRESSIVE X deviation (was 20) - 3x more intense!
+    local factorXOffset = (currentFactor - 1.0) * pathFactorInfluence * math.sin(progress * math.pi)
+    baseX = baseX + factorXOffset  -- Modify X path coordinate directly
     
     -- Calculate cosine wave offsets with interpolated parameters
     local currentAmplitudeX = cosine.previousAmplitudeX + (cosine.amplitudeX - cosine.previousAmplitudeX) * movement.transitionProgress
@@ -146,13 +167,29 @@ function CombinedMovementSystem:updateCombinedMovement(entity, dt)
     local currentPhaseX = cosine.previousPhaseX + (cosine.phaseX - cosine.previousPhaseX) * movement.transitionProgress
     local currentPhaseY = cosine.previousPhaseY + (cosine.phaseY - cosine.previousPhaseY) * movement.transitionProgress
     
-    -- Apply cosine wave modulation
-    local cosOffsetX = math.cos(cosine.time * currentFrequencyX + currentPhaseX) * currentAmplitudeX
-    local cosOffsetY = math.sin(cosine.time * currentFrequencyY + currentPhaseY) * currentAmplitudeY  -- Use sin for Y to create varied patterns
+    -- Apply SMOOTH cosine wave modulation for fluid movement with FACTOR
+    local cosOffsetX = math.cos(cosine.time * currentFrequencyX + currentPhaseX) * currentAmplitudeX * currentFactor
+    local cosOffsetY = math.sin(cosine.time * currentFrequencyY + currentPhaseY) * currentAmplitudeY * currentFactor
     
     -- Apply final position with cosine wave modulation
-    transform.x = baseX + cosOffsetX
-    transform.y = baseY + cosOffsetY
+    local finalX = baseX + cosOffsetX
+    local finalY = baseY + cosOffsetY
+    
+    -- CLAMP to screen bounds to prevent invisibility
+    local screenWidth = love.graphics.getWidth()
+    local screenHeight = love.graphics.getHeight()
+    local margin = 15  -- Keep dots slightly away from edges
+    
+    local clampedX = math.max(margin, math.min(screenWidth - margin, finalX))
+    local clampedY = math.max(margin, math.min(screenHeight - margin, finalY))
+    
+    -- Debug: Log when clamping occurs (rarely)
+    if (math.abs(clampedX - finalX) > 5 or math.abs(clampedY - finalY) > 5) and math.random() < 0.005 then
+        print("Entity", entity.id, "clamped - smooth boundaries maintained")
+    end
+    
+    transform.x = clampedX
+    transform.y = clampedY
 end
 
 return CombinedMovementSystem 

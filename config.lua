@@ -4,7 +4,7 @@
 local Config = {
     -- Dot appearance
     DOT_SIZE = 10,
-    PULSE_SPEED = 0.3,
+    PULSE_SPEED = 0.2,  -- Smooth, gentle pulsing
     PULSE_MIN_RATIO = 0.1,
     
     -- Movement parameters
