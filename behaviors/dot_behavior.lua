@@ -5,7 +5,7 @@ local Components = require('ecs.component')
 
 local DotBehavior = {}
 
--- Stop a moving dot and set it to medium size
+-- Stop a moving dot and set it to medium size with darker, transparent appearance
 function DotBehavior.stopMovement(entity)
     local movement = entity:getComponent("Movement")
     local render = entity:getComponent("Render")
@@ -25,6 +25,16 @@ function DotBehavior.stopMovement(entity)
         local mediumSize = minSize + (pulse.maxSize - minSize) * 0.5
         render.size = mediumSize
         print("Set stopped dot size to:", mediumSize, "for entity", entity.id)
+    end
+    
+    -- Make dot darker and 50% transparent when hit
+    if render then
+        -- Darken the color (multiply RGB by 0.4 to make it darker)
+        render.color[1] = render.color[1] * 0.4  -- Red channel
+        render.color[2] = render.color[2] * 0.4  -- Green channel  
+        render.color[3] = render.color[3] * 0.4  -- Blue channel
+        render.color[4] = 0.5  -- Set alpha to 50% transparency
+        print("Made dot", entity.id, "darker and 50% transparent")
     end
     
     return true  -- Successfully stopped
