@@ -3,7 +3,6 @@
 -- =============================================================================
 local System = require('ecs.base_system')
 local Components = require('ecs.component')
-local DartBoardBehavior = require('behaviors.dartboard_behavior')
 
 -- Scoring System - processes entities with Hit components
 local ScoringSystem = System.new("ScoringSystem", {"Transform", "Hit"})
@@ -128,10 +127,41 @@ function ScoringSystem:update(dt)
     end
 end
 
+-- Find the dart board entity
+function ScoringSystem:findDartBoard()
+    for _, entity in ipairs(self.world.entities) do
+        if entity:hasComponent("Image") then
+            return entity  -- Assuming only dart board has Image component
+        end
+    end
+    return nil
+end
+
+-- Get the center position of the dart board from world
+function ScoringSystem:getCenterFromWorld()
+    local dartBoard = self:findDartBoard()
+    if not dartBoard then
+        -- Fallback to window center if no dart board
+        local windowWidth = love.graphics.getWidth()
+        local windowHeight = love.graphics.getHeight()
+        return windowWidth / 2, windowHeight / 2
+    end
+    
+    local transform = dartBoard:getComponent("Transform")
+    if transform then
+        return transform.x, transform.y
+    end
+    
+    -- Fallback to window center
+    local windowWidth = love.graphics.getWidth()
+    local windowHeight = love.graphics.getHeight()
+    return windowWidth / 2, windowHeight / 2
+end
+
 -- Process a hit at the given position (internal method)
 function ScoringSystem:processHit(entity, x, y)
     -- Get dartboard center
-    local centerX, centerY = DartBoardBehavior.getCenterFromWorld(self.world)
+    local centerX, centerY = self:getCenterFromWorld()
     
     -- Calculate distance from center
     local dx = x - centerX

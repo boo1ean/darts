@@ -13,6 +13,7 @@ local ShakeSystem = require('systems.shake_system')
 local RenderSystem = require('systems.render_system')
 local TextSystem = require('systems.text_system')
 local ScoringSystem = require('systems.scoring_system')
+local GameSystem = require('systems.game_system')
 
 -- Export all systems
 return {
@@ -25,5 +26,6 @@ return {
     ShakeSystem = ShakeSystem,
     RenderSystem = RenderSystem,
     TextSystem = TextSystem,
-    ScoringSystem = ScoringSystem
+    ScoringSystem = ScoringSystem,
+    GameSystem = GameSystem
 } 

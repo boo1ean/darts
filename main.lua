@@ -7,14 +7,11 @@ local World = require('ecs.world')
 local Systems = require('ecs.system')
 local EntityFactory = require('factories')
 
--- Load behavior modules
-local GameBehavior = require('behaviors.game_behavior')
-local DotBehavior = require('behaviors.dot_behavior')
+-- Behaviors are now handled by systems
 
 -- Game state
 local gameWorld = nil
 local backgroundImage = nil
-local dartBoardEntity = nil
 local gameTime = 0
 
 -- =============================================================================
@@ -55,14 +52,18 @@ function love.load()
     -- Initialize TextSystem with world reference and add it LAST for top rendering
     Systems.TextSystem:init(gameWorld)
     gameWorld:addSystem(Systems.TextSystem)
+    
+    -- Initialize GameSystem with world reference
+    Systems.GameSystem:init(gameWorld)
+    gameWorld:addSystem(Systems.GameSystem)
     print("All systems added to world")
     
     -- Create dart board entity
-    dartBoardEntity = EntityFactory.createDartBoard(gameWorld, backgroundImage)
+    local dartBoardEntity = EntityFactory.createDartBoard(gameWorld, backgroundImage)
     print("Created dart board entity with ID:", dartBoardEntity.id)
     
     -- Create the initial pulsing dot at a random position
-    GameBehavior.spawnNewDot(gameWorld)
+    Systems.GameSystem:spawnNewDot()
     print("Created initial dot")
     
     -- Initialize game time
@@ -80,7 +81,7 @@ function love.update(dt)
     -- Debug: Print game stats every 2 seconds
     if math.floor(gameTime) % 2 == 0 and gameTime > 0 then
         print("Game time:", gameTime, "Total entities:", #gameWorld.entities)
-        GameBehavior.printStats(gameWorld)
+        Systems.GameSystem:printStats()
     end
 end
 
@@ -91,7 +92,7 @@ end
 
 function love.keypressed(key)
     if key == "space" then
-        -- Handle dart throw using behavior module
-        GameBehavior.throwDart(gameWorld, dartBoardEntity)
+        -- Handle dart throw using game system
+        Systems.GameSystem:queueEvent("dart_throw")
     end
 end
