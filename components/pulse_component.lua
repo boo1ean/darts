@@ -16,4 +16,4 @@ function PulseComponent.new(speed, minRatio, maxSize)
     return self
 end
 
-return PulseComponent 
+return PulseComponent

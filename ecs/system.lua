@@ -3,16 +3,16 @@
 -- =============================================================================
 
 -- Load all system modules
-local MovementSystem = require('systems.movement_system')
-local PulseSystem = require('systems.pulse_system')
-local CircularMovementSystem = require('systems.circular_movement_system')
-local CombinedMovementSystem = require('systems.combined_movement_system')
-local TargetGenerationSystem = require('systems.target_generation_system')
-local TimerSystem = require('systems.timer_system')
-local ShakeSystem = require('systems.shake_system')
-local RenderSystem = require('systems.render_system')
-local TextSystem = require('systems.text_system')
-local ScoringSystem = require('systems.scoring_system')
+local MovementSystem = require("systems.movement_system")
+local PulseSystem = require("systems.pulse_system")
+local CircularMovementSystem = require("systems.circular_movement_system")
+local CombinedMovementSystem = require("systems.combined_movement_system")
+local TargetGenerationSystem = require("systems.target_generation_system")
+local TimerSystem = require("systems.timer_system")
+local ShakeSystem = require("systems.shake_system")
+local RenderSystem = require("systems.render_system")
+local TextSystem = require("systems.text_system")
+local ScoringSystem = require("systems.scoring_system")
 
 -- Export all systems
 return {
@@ -25,5 +25,5 @@ return {
     ShakeSystem = ShakeSystem,
     RenderSystem = RenderSystem,
     TextSystem = TextSystem,
-    ScoringSystem = ScoringSystem
-} 
+    ScoringSystem = ScoringSystem,
+}

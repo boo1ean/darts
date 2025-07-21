@@ -1,9 +1,7 @@
 -- =============================================================================
 -- WORLD CLASS - ECS MANAGER
 -- =============================================================================
-local Entity = require('ecs.entity')
-local Components = require('ecs.component')
-local Systems = require('ecs.system')
+local Entity = require("ecs.entity")
 
 local World = {}
 World.__index = World
@@ -16,7 +14,7 @@ function World.new()
     -- Global game state storage for ECS-compliant data access
     self.gameState = {
         totalScore = 0,
-        hitCount = 0
+        hitCount = 0,
     }
     return self
 end
@@ -25,7 +23,7 @@ function World:createEntity()
     local entity = Entity.new(self.nextEntityId)
     self.nextEntityId = self.nextEntityId + 1
     table.insert(self.entities, entity)
-    
+
     -- Don't add to systems immediately - wait until components are added
     return entity
 end
@@ -40,7 +38,7 @@ end
 
 function World:addComponentToEntity(entity, componentType, component)
     entity:addComponent(componentType, component)
-    
+
     -- Notify all systems about the component addition
     for _, system in ipairs(self.systems) do
         system:addEntity(entity)
@@ -49,11 +47,11 @@ end
 
 function World:removeComponentFromEntity(entity, componentType)
     entity:removeComponent(componentType)
-    
+
     -- Update all systems - they will re-evaluate if entity matches their requirements
     for _, system in ipairs(self.systems) do
-        system:removeEntity(entity)  -- Remove first
-        system:addEntity(entity)     -- Re-add if it still matches
+        system:removeEntity(entity) -- Remove first
+        system:addEntity(entity) -- Re-add if it still matches
     end
 end
 
@@ -62,7 +60,7 @@ function World:removeEntity(entity)
     for _, system in ipairs(self.systems) do
         system:removeEntity(entity)
     end
-    
+
     -- Remove from world
     for i, e in ipairs(self.entities) do
         if e.id == entity.id then
@@ -105,4 +103,4 @@ function World:clear()
     end
 end
 
-return World 
+return World

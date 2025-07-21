@@ -17,7 +17,7 @@ function System:addEntity(entity)
         -- Check if entity is already in the system to avoid duplicates
         for _, e in ipairs(self.entities) do
             if e.id == entity.id then
-                return  -- Entity already exists, don't add again
+                return -- Entity already exists, don't add again
             end
         end
         table.insert(self.entities, entity)
@@ -46,4 +46,4 @@ function System:update(dt)
     -- Override in subclasses
 end
 
-return System 
+return System

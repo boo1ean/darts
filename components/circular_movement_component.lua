@@ -19,4 +19,4 @@ function CircularMovementComponent.new(radius, centerX, centerY, angle)
     return self
 end
 
-return CircularMovementComponent 
+return CircularMovementComponent

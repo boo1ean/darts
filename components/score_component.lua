@@ -10,10 +10,10 @@ function ScoreComponent.new(points, distanceFromCenter, hitPosition)
     self.type = "Score"
     self.points = points or 0
     self.distanceFromCenter = distanceFromCenter or 0
-    self.hitPosition = hitPosition or {x = 0, y = 0}
+    self.hitPosition = hitPosition or { x = 0, y = 0 }
     self.timestamp = love.timer.getTime()
-    
+
     return self
 end
 
-return ScoreComponent 
+return ScoreComponent

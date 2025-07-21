@@ -2,7 +2,7 @@
 -- ASSETS
 -- =============================================================================
 local Assets = {
-    image = nil
+    image = nil,
 }
 
-return Assets 
+return Assets

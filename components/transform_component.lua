@@ -16,4 +16,4 @@ function TransformComponent.new(x, y, rotation, scale)
     return self
 end
 
-return TransformComponent 
+return TransformComponent

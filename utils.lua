@@ -6,7 +6,7 @@ local Utils = {}
 function Utils.getImageCenter(gameState)
     return {
         x = gameState.image.x + gameState.image.width / 2,
-        y = gameState.image.y + gameState.image.height / 2
+        y = gameState.image.y + gameState.image.height / 2,
     }
 end
 
@@ -32,4 +32,4 @@ function Utils.normalizeVector(x, y)
     return 0, 0
 end
 
-return Utils 
+return Utils

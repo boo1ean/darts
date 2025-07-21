@@ -34,4 +34,4 @@ function Entity:destroy()
     self.components = {}
 end
 
-return Entity 
+return Entity

@@ -10,4 +10,4 @@ function Component.new(componentType)
     return self
 end
 
-return Component 
+return Component

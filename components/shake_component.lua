@@ -13,9 +13,9 @@ function Shake.new(duration, intensity)
     self.time = 0
     self.shakeX = 0
     self.shakeY = 0
-    self.originalX = nil  -- Will store original position
+    self.originalX = nil -- Will store original position
     self.originalY = nil
     return self
 end
 
-return Shake 
+return Shake

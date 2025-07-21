@@ -9,9 +9,9 @@ function HitComponent.new(hitTime)
     local self = setmetatable({}, HitComponent)
     self.type = "Hit"
     self.hitTime = hitTime or love.timer.getTime()
-    self.processed = false  -- Flag to ensure we only score once
-    
+    self.processed = false -- Flag to ensure we only score once
+
     return self
 end
 
-return HitComponent 
+return HitComponent

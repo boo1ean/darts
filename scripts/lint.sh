@@ -32,13 +32,13 @@ fi
 echo ""
 echo "Checking for common issues..."
 
-# Check for global variables (excluding love)
+# Check for undefined globals using luacheck
 echo -n "  Checking for undefined globals... "
-GLOBALS=$(grep -r "^[^local].*=" *.lua 2>/dev/null | grep -v "love\." | grep -v "function" | wc -l)
+GLOBALS=$(luacheck . --codes --only 113 2>/dev/null | grep "113" | wc -l)
 if [ "$GLOBALS" -eq 0 ]; then
     echo "✅"
 else
-    echo "⚠️  Found $GLOBALS potential global variables"
+    echo "⚠️  Found $GLOBALS undefined global accesses"
 fi
 
 # Check for print statements (should use proper logging)

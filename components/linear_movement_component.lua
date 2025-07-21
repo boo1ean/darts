@@ -16,4 +16,4 @@ function LinearMovementComponent.new(targetX, targetY)
     return self
 end
 
-return LinearMovementComponent 
+return LinearMovementComponent
