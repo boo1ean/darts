@@ -13,12 +13,10 @@ All project interactions should be done through scripts in the `scripts/` direct
 ### Development Helpers
 - `./scripts/watch.sh` - Run game with auto-reload
 - `./scripts/debug.sh` - Run with debug mode enabled
-- `./scripts/profile.sh` - Run with performance profiling
 
 ### Code Generation
 - `./scripts/new-component.sh <name>` - Create new component
 - `./scripts/new-system.sh <name>` - Create new system
-- `./scripts/new-test.sh <name>` - Create new test file
 
 ## Script Descriptions
 

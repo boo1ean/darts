@@ -2,16 +2,16 @@
 
 ## Core Design: Entity-Component-System (ECS)
 
-This project follows a pure ECS architecture where:
+This project follows an ECS architecture where:
 - **Entities** are just IDs
-- **Components** contain only data (no logic)
+- **Components** primarily contain data but may include helper methods
 - **Systems** contain only logic (no data)
 - **Behaviors** orchestrate high-level game actions
 
 ## Key Architectural Decisions
 
 ### 1. Pure ECS Implementation
-- No logic in components - they are pure data containers
+- Components primarily store data but may include helper methods
 - Systems process entities with specific component combinations
 - World manages entity lifecycle and component storage
 
@@ -20,6 +20,10 @@ This project follows a pure ECS architecture where:
 - Components are composable (entities can have multiple)
 - No dependencies between components
 - All components extend `BaseComponent` for consistent interface
+- Components may contain helper methods for data manipulation and access
+  - Helper methods should only work with the component's own data
+  - Methods for initialization, mutation, and computed properties are allowed
+  - No external dependencies or side effects in component methods
 
 ### 3. System Processing Order
 Systems are added to the world in a specific order:
@@ -43,7 +47,7 @@ The `CombinedMovementSystem` processes all movement types together.
 
 ### 5. Factory Pattern
 Factories create pre-configured entities:
-- `dartboard_factory` - Creates the game board
+- `dart_board_factory` - Creates the game board
 - `dot_factory` - Creates moving targets
 - `text_factory` - Creates score text
 
@@ -53,7 +57,8 @@ Factories create pre-configured entities:
 ### To Add a New Component:
 1. Create file in `components/` extending `BaseComponent`
 2. Define data fields in `new()` method
-3. No methods except constructor
+3. Add helper methods if needed for data manipulation
+4. Keep methods focused on the component's own data
 
 ### To Add a New System:
 1. Create file in `systems/` extending `BaseSystem`

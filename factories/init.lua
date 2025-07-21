@@ -2,7 +2,7 @@
 -- FACTORY LOADER - Loads and exports all individual factories
 -- =============================================================================
 local DotFactory = require('factories.dot_factory')
-local DartboardFactory = require('factories.dartboard_factory')
+local DartboardFactory = require('factories.dart_board_factory')
 local TextFactory = require('factories.text_factory')
 
 -- Combined factory interface for backward compatibility

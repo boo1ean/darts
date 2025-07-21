@@ -87,7 +87,7 @@ systems/
 ```
 factories/
 ├── dot_factory.lua                # Moving target entities
-├── dartboard_factory.lua          # Dartboard entity creation
+├── dart_board_factory.lua         # Dartboard entity creation
 ├── text_factory.lua               # Score text entities
 └── init.lua                       # Factory aggregation
 ```
