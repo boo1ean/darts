@@ -2,7 +2,30 @@
 -- MAIN GAME FILE - ECS ARCHITECTURE
 -- =============================================================================
 
--- Load ECS modules
+-- Save the default Love2D error handler
+local defaultErrorHandler = love.errorhandler
+
+-- Love2D's error printer function
+local function error_printer(msg, layer)
+    print((debug.traceback("Error: " .. tostring(msg), 1+(layer or 1)):gsub("\n[^\n]+$", "")))
+end
+
+-- Custom error handler for AI validation vs user interaction
+function love.errorhandler(msg)
+    -- Check if running in AI validation mode
+    local isValidationMode = os.getenv("LOVE2D_VALIDATION_MODE") == "true"
+
+    if isValidationMode then
+        -- AI validation mode: use Love2D's error printer and exit immediately
+        error_printer(msg, 1)
+        os.exit(1)
+    else
+        -- User mode: use the default Love2D error handler
+        return defaultErrorHandler(msg)
+    end
+end
+
+-- Load ECS modules  
 local World = require("ecs.world")
 local Systems = require("ecs.system")
 local EntityFactory = require("factories")
@@ -25,6 +48,7 @@ function love.load()
     -- Initialize ECS world
     gameWorld = World.new()
     print("World created")
+    
 
     -- Load background image
     backgroundImage = love.graphics.newImage("assets/board.png")

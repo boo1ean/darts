@@ -45,10 +45,25 @@ fi
 # Ensure .tmp directory exists
 mkdir -p "$PROJECT_ROOT/.tmp"
 
-# Start Love2D in background with output redirected
-love . > "$LOG_FILE" 2>&1 &
+# Start Love2D in validation mode with output redirected
+LOVE2D_VALIDATION_MODE=true love . > "$LOG_FILE" 2>&1 &
 LOVE_PID=$!
 echo "$LOVE_PID" > "$PID_FILE"
+
+# Give a moment for initial output and check for immediate errors
+sleep 1
+
+# Check for startup errors before monitoring
+if [ -f "$LOG_FILE" ] && [ -s "$LOG_FILE" ]; then
+    # Check for Love2D error format (our custom error handler uses this)
+    if grep -q "^Error:" "$LOG_FILE"; then
+        echo "❌ Game startup errors detected"
+        echo "Error details:"
+        # Show the error and the following stack trace lines
+        grep -A 10 "^Error:" "$LOG_FILE" | head -15
+        exit 1
+    fi
+fi
 
 # Wait for game to initialize
 echo -n "🔍 Validating game startup"
@@ -67,15 +82,13 @@ for i in $(seq 1 $TIMEOUT_SECONDS); do
         exit 1
     fi
     
-    # Check for common error patterns in output
-    if [ -f "$LOG_FILE" ]; then
-        if grep -i "error\|failed\|exception\|nil.*attempt" "$LOG_FILE" >/dev/null 2>&1; then
-            echo ""
-            echo "❌ Game startup errors detected"
-            echo "Error details:"
-            grep -i "error\|failed\|exception\|nil.*attempt" "$LOG_FILE" | head -3
-            exit 1
-        fi
+    # Check for new errors that might have appeared during startup
+    if [ -f "$LOG_FILE" ] && grep -q "^Error:" "$LOG_FILE"; then
+        echo ""
+        echo "❌ Game startup errors detected"
+        echo "Error details:"
+        grep -A 10 "^Error:" "$LOG_FILE" | head -15
+        exit 1
     fi
 done
 
