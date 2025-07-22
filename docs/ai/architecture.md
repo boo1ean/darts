@@ -36,12 +36,31 @@ Systems are added to the world in a specific order:
 7. `RenderSystem` - Draw entities
 8. `TextSystem` - Draw text (last for top layer)
 
-### 4. Movement Architecture
-Movement is handled through multiple component types:
-- `MovementComponent` - Base movement state
-- `LinearMovementComponent` - Straight line movement
-- `CircularMovementComponent` - Orbital movement
-- `CosineMovementComponent` - Wave patterns
+### 4. Component Reference
+All game data is stored in components:
+
+**Core Components:**
+- `BaseComponent` - Base class for all components (provides type field)
+- `TransformComponent` - Position, rotation, and scale
+- `RenderComponent` - Visual appearance (color, size, shape)
+- `ImageComponent` - Image-based rendering
+
+**Movement Components:**
+- `MovementComponent` - Base movement state and speed
+- `LinearMovementComponent` - Straight line movement to target
+- `CircularMovementComponent` - Orbital movement around center
+- `CosineMovementComponent` - Wave-based movement patterns
+
+**Visual Effect Components:**
+- `PulseComponent` - Size pulsing animation
+- `ShakeComponent` - Position shaking effects
+- `TextComponent` - Animated text display with fade/popup
+- `StatDisplayComponent` - Generic stat display with interpolation
+
+**Game Logic Components:**
+- `ScoreComponent` - Score data (points, distance, position)
+- `HitComponent` - Marks entities for hit processing
+- `TimerComponent` - Delayed component addition/removal
 
 The `CombinedMovementSystem` processes all movement types together.
 
