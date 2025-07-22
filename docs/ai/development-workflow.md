@@ -16,10 +16,10 @@ This document describes the complete development workflow for AI agents working 
 
 ### 2. Understanding the Codebase
 **Read in this order**:
-1. `CLAUDE.md` - Quick reference and validation rules
-2. `docs/ai/architecture.md` - ECS patterns and design principles
-3. `docs/ai/conventions.md` - Code standards and style guide
-4. `docs/ai/context.md` - Game mechanics and domain knowledge
+1. `CLAUDE.md` - Quick reference, scripts, and validation rules
+2. `docs/ai/architecture.md` - Complete ECS patterns and implementation guide
+3. `docs/ai/context.md` - Game mechanics and domain knowledge
+4. `docs/ai/troubleshooting.md` - Common issues (as needed)
 
 ## Development Cycle
 
@@ -171,26 +171,18 @@ Agent: "Thanks! A few more details:
    - Add appropriate comments
 
 ### Phase 3: Validation
-1. **Run full test suite**
-   ```bash
-   ./scripts/test.sh  # Must pass completely
-   ```
+**Use `./scripts/validate-all.sh` for comprehensive validation, or run individual steps:**
 
-2. **Check code quality**
-   ```bash
-   ./scripts/lint.sh  # Must pass without errors
-   ```
+1. **Test suite**: `./scripts/test.sh` (must pass completely)
+2. **Code quality**: `./scripts/lint.sh --fix` (auto-format and check)
+3. **Game functionality**: `./scripts/validate-game.sh` (automated validation)
+4. **Documentation**: `./scripts/validate-docs.sh` (if docs were modified)
 
-3. **Verify game functionality**
-   ```bash
-   ./scripts/run.sh   # Manual verification
-   ```
-
-4. **Architecture compliance check**
-   - Components contain only data + helper methods
-   - Systems contain only logic, no persistent state
-   - Entities created through factories
-   - Proper system registration order
+**Architecture Compliance Check:**
+- Components contain only data + helper methods
+- Systems contain only logic, no persistent state
+- Entities created through factories
+- Proper system registration order
 
 ### Phase 4: Documentation
 1. **Update relevant documentation** (if needed)
@@ -331,85 +323,28 @@ Agent: "Thanks! A few more details:
 - Share current git state
 - Include output of test and lint scripts
 
-### Manual Verification Requests
+### Manual Verification Process
 
-AI agents should request manual verification from users in these situations:
+**When to Request Manual Verification:**
+- Visual/gameplay changes that cannot be fully tested via automated scripts
+- Complex behavioral changes where automated tests may miss edge cases
+- User experience improvements requiring subjective evaluation
 
-#### When to Request Manual Verification
-1. **Visual/gameplay changes** that cannot be fully tested via automated scripts
-2. **Complex behavioral changes** where automated tests may miss edge cases  
-3. **Performance-sensitive modifications** that require human judgment
-4. **User experience improvements** where subjective evaluation is needed
-5. **After fixing critical bugs** that could have subtle side effects
-6. **Before completing major feature implementations**
+**Manual Verification Steps:**
+1. Start game: `./scripts/run-for-verification.sh`
+2. Provide clear testing instructions to user
+3. Wait for user feedback before proceeding
+4. Stop game: `./scripts/stop-verification.sh`
 
-#### How to Request Manual Verification
-
-**Standard Request Format:**
+**Request Format:**
 ```
-Manual verification needed for [specific change/feature].
+Manual verification needed for [specific change].
 
 Starting game for verification...
 
-Please test the following:
-- [Specific behavior 1 to verify]
-- [Specific behavior 2 to verify]
-- [Any edge cases to check]
-
-Steps to verify:
-1. [Exact steps user should follow in the running game]
-2. [Expected outcome at each step]
-3. [What to look for that indicates success]
+Please test: [specific behaviors to verify]
+Expected: [what should happen]
 ```
-
-**Example Request:**
-```
-Manual verification needed for dart physics improvements.
-
-Starting game for verification...
-
-Please test the following:
-- Darts stick properly to dartboard
-- Bounce behavior feels realistic
-- Score detection works accurately
-- Visual feedback is smooth
-
-Steps to verify:
-1. Throw several darts at different dartboard sections
-2. Verify darts stick and don't fall through
-3. Check that scores appear correctly and promptly
-4. Look for any visual glitches or jerky animations
-
-Expected: Smooth, realistic dart physics with accurate scoring.
-```
-
-#### AI Agent Implementation
-When requesting manual verification, AI agents should:
-1. **Automatically start the game** using `./scripts/run-for-verification.sh`
-   - This script starts the game silently without polluting agent context
-   - Logs are redirected to `.tmp/verification_game.log`
-   - Only shows success/failure status to agent
-2. **Provide clear testing instructions** while game is running
-3. **Wait for user feedback** before proceeding
-4. **Stop the game when done** using `./scripts/stop-verification.sh`
-
-#### Manual Verification Script Usage
-```bash
-# AI agent starts game for verification (minimal output)
-./scripts/run-for-verification.sh
-
-# User tests the running game...
-
-# AI agent stops game when verification complete
-./scripts/stop-verification.sh
-```
-
-#### What NOT to Request Manual Verification For
-- Changes covered by automated tests (unless they affect UX)
-- Simple data/logic changes with no visual component
-- Internal refactoring that doesn't change behavior
-- Documentation updates
-- Code formatting/style changes
 
 ### Completion Verification
 - Confirm all quality gates passed

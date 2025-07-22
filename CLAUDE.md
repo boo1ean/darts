@@ -4,31 +4,38 @@
 ECS-based dartboard game built with Love2D. Features moving targets with complex movement patterns, physics-based dartboard reactions, and animated scoring system.
 
 ## Essential Reading Order
-1. `docs/ai/architecture.md` - Understand the ECS design and core patterns
-2. `docs/ai/conventions.md` - Follow project code standards
-3. `docs/ai/tools.md` - Available scripts and automation
-4. `docs/ai/context.md` - Game mechanics and domain knowledge
-5. `docs/ai/troubleshooting.md` - Common issues and solutions
-6. `docs/ai/development-workflow.md` - Complete development process
-7. `docs/ai/common-tasks.md` - Task-specific guidance and examples
-8. `docs/ai/documentation-maintenance.md` - Keeping docs up-to-date
+1. `docs/ai/architecture.md` - Complete ECS patterns and implementation guide
+2. `docs/ai/development-workflow.md` - Development process and workflows
+3. `docs/ai/context.md` - Game mechanics and domain knowledge
+4. `docs/ai/troubleshooting.md` - Common issues and solutions
 
-## Quick Reference
-### Common Commands
-- **Comprehensive validation**: `./scripts/validate-all.sh` (all checks in one)
-- Test: `./scripts/test.sh`
-- Lint: `./scripts/lint.sh` (use `--fix` to auto-format with stylua)
-- Validate game: `./scripts/validate-game.sh` (silent, for AI agents)
-- Run game: `./scripts/run.sh` (verbose, for development)
-- Start for verification: `./scripts/run-for-verification.sh` (silent, for manual testing)
-- Stop verification: `./scripts/stop-verification.sh`
-- New component: `./scripts/new-component.sh <name>`
-- New system: `./scripts/new-system.sh <name>`
+## Development Scripts Reference
 
-### Critical Files (Read First)
-- `docs/ai/architecture.md` - ECS patterns
-- `docs/ai/conventions.md` - Code standards
-- `main.lua` - System registration order
+### Core Operations
+- `./scripts/run.sh` - Run the game (interactive, verbose output)
+- `./scripts/validate-game.sh` - Silent game validation for AI agents
+- `./scripts/run-for-verification.sh` - Start game silently for manual verification
+- `./scripts/stop-verification.sh` - Stop verification game
+- `./scripts/test.sh` - Run all tests and checks
+- `./scripts/lint.sh` - Static code analysis (use `--fix` to auto-format with stylua)
+- `./scripts/setup.sh` - Install dependencies
+- `./scripts/validate-docs.sh` - Validate AI documentation is up-to-date
+- `./scripts/validate-all.sh` - **Comprehensive validation** (all checks in one)
+
+### Development Helpers
+- `./scripts/watch.sh` - Run game with auto-reload
+- `./scripts/debug.sh` - Run with debug mode enabled
+
+### Code Generation
+- `./scripts/new-component.sh <name>` - Create new component
+- `./scripts/new-system.sh <name>` - Create new system
+
+### Script Usage Notes
+- **validate-game.sh**: Silent validation designed for AI agents - starts Love2D game in background, monitors for errors, validates stability for 5 seconds, automatically terminates. Returns clean exit codes without debug pollution.
+- **run-for-verification.sh**: Starts game silently for manual verification - redirects output to `.tmp/verification_game.log`, stores PID in `.tmp/verification_game.pid`, minimal output to avoid polluting agent context.
+- **lint.sh**: Use `--fix` option for automatic formatting with stylua. Always use `--fix` to maintain consistent code formatting.
+- **validate-all.sh**: Options: `--skip-tests` (skip test suite), `--skip-game` (skip game validation), `--verbose` (show detailed output)
+
 
 ## Mandatory Validation Steps
 **Use `./scripts/validate-all.sh` for comprehensive validation, or run individual steps:**
@@ -48,13 +55,17 @@ ECS-based dartboard game built with Love2D. Features moving targets with complex
 ## Documentation Maintenance Rules
 AI agents MUST update relevant documentation when making these changes:
 - **Architecture changes** → Update `docs/ai/architecture.md`
-- **Code patterns** → Update `docs/ai/conventions.md`
-- **New scripts/tools** → Update `docs/ai/tools.md`
 - **Game mechanics** → Update `docs/ai/context.md`
 - **New issues/solutions** → Update `docs/ai/troubleshooting.md`
-- **Task workflows** → Update `docs/ai/common-tasks.md`
+- **Workflow changes** → Update `docs/ai/development-workflow.md`
+- **Script additions/modifications** → Update this file's script reference section
 
-See `docs/ai/documentation-maintenance.md` for complete guidelines.
+### Documentation Update Requirements
+- Update docs DURING implementation, not after
+- Keep examples aligned with actual code
+- Add new troubleshooting entries for issues encountered
+- Ensure consistent terminology across all docs
+- Validate documentation changes with `./scripts/validate-docs.sh`
 
 ## AI Agent Requirements - Architectural Excellence
 

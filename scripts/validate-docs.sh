@@ -39,14 +39,14 @@ else
     echo "✅"
 fi
 
-# Check if all scripts are documented in tools.md
+# Check if all scripts are documented in CLAUDE.md
 echo -n "Checking script documentation... "
 SCRIPTS=$(find scripts/ -name "*.sh" | wc -l)
-TOOL_SCRIPTS=$(grep -c "\.sh" docs/ai/tools.md || true)
+CLAUDE_SCRIPTS=$(grep -c "scripts/.*\.sh" CLAUDE.md || true)
 
-if [ "$SCRIPTS" -gt "$TOOL_SCRIPTS" ]; then
+if [ "$SCRIPTS" -gt "$CLAUDE_SCRIPTS" ]; then
     echo "❌"
-    echo "  Found $SCRIPTS scripts but only $TOOL_SCRIPTS documented"
+    echo "  Found $SCRIPTS scripts but only $CLAUDE_SCRIPTS documented in CLAUDE.md"
     FAILED=1
 else
     echo "✅"
@@ -99,7 +99,7 @@ else
     echo "To fix:"
     echo "1. Update relevant docs in docs/ai/"
     echo "2. Add missing component/system documentation"
-    echo "3. Document new scripts in tools.md"
+    echo "3. Document new scripts in CLAUDE.md"
     echo "4. Resolve TODO items"
     exit 1
 fi
