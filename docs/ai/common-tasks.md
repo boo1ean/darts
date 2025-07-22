@@ -1,5 +1,36 @@
 # Common Development Tasks
 
+## Task Decision Tree
+
+### Adding New Feature
+1. **Understand requirement** → Read `docs/ai/context.md`
+2. **Check existing systems** → Review relevant files in `systems/`
+3. **Determine approach**:
+   - New component needed? → Use component creation workflow
+   - Modify existing system? → Read system's current logic first
+   - New visual effect? → Create component + system + update render order
+4. **Use factories** → Never create entities directly in systems
+
+### Fixing Bug
+1. **Run test.sh** → Establish current state
+2. **Run lint.sh** → Fix any code quality issues first
+3. **Identify affected systems** → Look for relevant component usage
+4. **Test incrementally** → Make small changes, test frequently
+
+### Modifying Movement
+1. **Check CombinedMovementSystem** → Understand current movement processing
+2. **Review movement components**:
+   - LinearMovementComponent
+   - CircularMovementComponent  
+   - CosineMovementComponent
+3. **Test movement changes** → Visual verification crucial
+
+### Adding Visual Effect
+1. **Create component** → Data only, extends BaseComponent
+2. **Create system** → Logic only, extends BaseSystem
+3. **Update render order** → Check system registration in main.lua
+4. **Ensure proper layering** → RenderSystem before TextSystem
+
 ## Adding a New Component
 
 1. **Create component file**:

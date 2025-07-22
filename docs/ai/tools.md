@@ -5,10 +5,12 @@ All project interactions should be done through scripts in the `scripts/` direct
 ## Available Scripts
 
 ### Core Operations
-- `./scripts/run.sh` - Run the game
+- `./scripts/run.sh` - Run the game (interactive, verbose output)
+- `./scripts/validate-game.sh` - Silent game validation for AI agents
 - `./scripts/test.sh` - Run all tests and checks
 - `./scripts/lint.sh` - Static code analysis
 - `./scripts/setup.sh` - Install dependencies
+- `./scripts/validate-docs.sh` - Validate AI documentation is up-to-date
 
 ### Development Helpers
 - `./scripts/watch.sh` - Run game with auto-reload
@@ -22,6 +24,16 @@ All project interactions should be done through scripts in the `scripts/` direct
 
 ### run.sh
 Basic game execution. Checks if Love2D is installed and runs the game.
+**Note**: Produces verbose debug output - use validate-game.sh for AI validation.
+
+### validate-game.sh
+Silent game validation designed for AI agents:
+1. Starts Love2D game in background
+2. Monitors for startup errors and crashes
+3. Validates game stability for 5 seconds
+4. Automatically terminates game process
+5. Returns clean exit codes without debug pollution
+**Output**: Minimal status messages only, no debug logs
 
 ### test.sh
 Comprehensive testing pipeline:
@@ -30,6 +42,14 @@ Comprehensive testing pipeline:
 3. Runs unit tests (if test framework available)
 4. Performs quick game startup test
 5. Reports results
+
+### validate-docs.sh
+Documentation validation pipeline:
+1. Checks component documentation coverage
+2. Verifies system documentation alignment
+3. Validates script documentation completeness
+4. Scans for TODO/FIXME items
+5. Checks for broken internal links
 
 ### lint.sh
 Code quality checks:
