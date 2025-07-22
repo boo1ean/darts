@@ -11,21 +11,20 @@ local World = require("ecs.world")
 
 describe("StatDisplay Factory", function()
     local world
-    
+
     before_each(function()
         world = World.new()
     end)
 
     describe("createStatDisplay", function()
         it("creates entity with StatDisplay and Transform components", function()
-            local entity = StatDisplayFactory.createStatDisplay(
-                world, "Test Stat", "testValue", 100, 200, 18, "decimal"
-            )
-            
+            local entity =
+                StatDisplayFactory.createStatDisplay(world, "Test Stat", "testValue", 100, 200, 18, "decimal")
+
             assert.is_not_nil(entity)
             assert.is_true(entity:hasComponent("StatDisplay"))
             assert.is_true(entity:hasComponent("Transform"))
-            
+
             local statDisplay = entity:getComponent("StatDisplay")
             assert.are.equal("Test Stat", statDisplay.label)
             assert.are.equal("testValue", statDisplay.valueKey)
@@ -33,7 +32,7 @@ describe("StatDisplay Factory", function()
             assert.are.equal(200, statDisplay.y)
             assert.are.equal(18, statDisplay.fontSize)
             assert.are.equal("decimal", statDisplay.format)
-            
+
             local transform = entity:getComponent("Transform")
             assert.are.equal(100, transform.x)
             assert.are.equal(200, transform.y)
@@ -41,7 +40,7 @@ describe("StatDisplay Factory", function()
 
         it("creates entity with default values when parameters omitted", function()
             local entity = StatDisplayFactory.createStatDisplay(world)
-            
+
             local statDisplay = entity:getComponent("StatDisplay")
             assert.are.equal("Stat", statDisplay.label)
             assert.are.equal("value", statDisplay.valueKey)
@@ -54,9 +53,9 @@ describe("StatDisplay Factory", function()
         it("adds entity to world", function()
             local initialCount = #world.entities
             local entity = StatDisplayFactory.createStatDisplay(world, "Test", "test")
-            
+
             assert.are.equal(initialCount + 1, #world.entities)
-            
+
             -- Verify entity is in world
             local found = false
             for _, worldEntity in ipairs(world.entities) do
@@ -72,7 +71,7 @@ describe("StatDisplay Factory", function()
     describe("convenience factory functions", function()
         it("createTotalScoreDisplay creates correct stat entity", function()
             local entity = StatDisplayFactory.createTotalScoreDisplay(world, 50, 100, 20)
-            
+
             local statDisplay = entity:getComponent("StatDisplay")
             assert.are.equal("Total Score", statDisplay.label)
             assert.are.equal("totalScore", statDisplay.valueKey)
@@ -80,7 +79,7 @@ describe("StatDisplay Factory", function()
             assert.are.equal(100, statDisplay.y)
             assert.are.equal(20, statDisplay.fontSize)
             assert.are.equal("integer", statDisplay.format)
-            
+
             local transform = entity:getComponent("Transform")
             assert.are.equal(50, transform.x)
             assert.are.equal(100, transform.y)
@@ -88,7 +87,7 @@ describe("StatDisplay Factory", function()
 
         it("createHitCountDisplay creates correct stat entity", function()
             local entity = StatDisplayFactory.createHitCountDisplay(world, 25, 75, 14)
-            
+
             local statDisplay = entity:getComponent("StatDisplay")
             assert.are.equal("Hit Count", statDisplay.label)
             assert.are.equal("hitCount", statDisplay.valueKey)
@@ -100,7 +99,7 @@ describe("StatDisplay Factory", function()
 
         it("createAverageScoreDisplay creates correct stat entity", function()
             local entity = StatDisplayFactory.createAverageScoreDisplay(world, 10, 30, 16)
-            
+
             local statDisplay = entity:getComponent("StatDisplay")
             assert.are.equal("Average Score", statDisplay.label)
             assert.are.equal("averageScore", statDisplay.valueKey)
@@ -114,7 +113,7 @@ describe("StatDisplay Factory", function()
             local totalScoreEntity = StatDisplayFactory.createTotalScoreDisplay(world, 0, 0)
             local hitCountEntity = StatDisplayFactory.createHitCountDisplay(world, 0, 20)
             local averageEntity = StatDisplayFactory.createAverageScoreDisplay(world, 0, 40)
-            
+
             -- All should use default font size when not specified
             assert.are.equal(16, totalScoreEntity:getComponent("StatDisplay").fontSize)
             assert.are.equal(16, hitCountEntity:getComponent("StatDisplay").fontSize)
@@ -127,7 +126,7 @@ describe("StatDisplay Factory", function()
             local entity1 = StatDisplayFactory.createTotalScoreDisplay(world, 0, 0)
             local entity2 = StatDisplayFactory.createHitCountDisplay(world, 0, 20)
             local entity3 = StatDisplayFactory.createAverageScoreDisplay(world, 0, 40)
-            
+
             assert.are_not.equal(entity1.id, entity2.id)
             assert.are_not.equal(entity1.id, entity3.id)
             assert.are_not.equal(entity2.id, entity3.id)

@@ -15,23 +15,23 @@ describe("StatDisplay System", function()
     local system
     local entity
     local mockWorld
-    
+
     before_each(function()
         system = StatDisplaySystem
         entity = Entity.new(1)
-        
+
         -- Create a mock world with game state
         mockWorld = {
             gameState = {
                 totalScore = 150,
                 hitCount = 5,
-            }
+            },
         }
-        
+
         system:init(mockWorld)
         system.entities = {}
     end)
-    
+
     after_each(function()
         system.entities = {}
         system.world = nil
@@ -40,7 +40,7 @@ describe("StatDisplay System", function()
     describe("initialization", function()
         it("has correct type and required components", function()
             assert.are.equal("StatDisplaySystem", system.type)
-            assert.are.same({"StatDisplay", "Transform"}, system.requiredComponents)
+            assert.are.same({ "StatDisplay", "Transform" }, system.requiredComponents)
         end)
 
         it("stores world reference when initialized", function()
@@ -55,9 +55,9 @@ describe("StatDisplay System", function()
             entity:addComponent("StatDisplay", statDisplay)
             entity:addComponent("Transform", transform)
             system:addEntity(entity)
-            
+
             system:update(0.016) -- One frame
-            
+
             assert.are.equal(150, statDisplay.targetValue)
         end)
 
@@ -67,9 +67,9 @@ describe("StatDisplay System", function()
             entity:addComponent("StatDisplay", statDisplay)
             entity:addComponent("Transform", transform)
             system:addEntity(entity)
-            
+
             system:update(0.016) -- One frame
-            
+
             assert.are.equal(5, statDisplay.targetValue)
         end)
 
@@ -79,9 +79,9 @@ describe("StatDisplay System", function()
             entity:addComponent("StatDisplay", statDisplay)
             entity:addComponent("Transform", transform)
             system:addEntity(entity)
-            
+
             system:update(0.016) -- One frame
-            
+
             assert.are.equal(30, statDisplay.targetValue) -- 150/5 = 30
         end)
 
@@ -92,9 +92,9 @@ describe("StatDisplay System", function()
             entity:addComponent("StatDisplay", statDisplay)
             entity:addComponent("Transform", transform)
             system:addEntity(entity)
-            
+
             system:update(0.016) -- One frame
-            
+
             assert.are.equal(0, statDisplay.targetValue)
         end)
 
@@ -106,15 +106,15 @@ describe("StatDisplay System", function()
             entity:addComponent("StatDisplay", statDisplay)
             entity:addComponent("Transform", transform)
             system:addEntity(entity)
-            
+
             -- Call update to set target from game state (150)
             system:update(0.016)
             -- Now manually set displayed value back to 0 after target is set
             statDisplay.displayedValue = 0
-            
+
             -- Call interpolate directly to test interpolation without updating target
             system:interpolateValue(statDisplay, 0.016) -- Small dt to see partial interpolation
-            
+
             -- Should be closer to target but not equal (exponential interpolation)
             assert.is_true(statDisplay.displayedValue > 0)
             assert.is_true(statDisplay.displayedValue < 150) -- Target is 150 from game state
@@ -129,9 +129,9 @@ describe("StatDisplay System", function()
             entity:addComponent("StatDisplay", statDisplay)
             entity:addComponent("Transform", transform)
             system:addEntity(entity)
-            
+
             system:update(0.016) -- One frame
-            
+
             assert.are.equal(100, statDisplay.displayedValue)
         end)
 
@@ -141,9 +141,9 @@ describe("StatDisplay System", function()
             entity:addComponent("StatDisplay", statDisplay)
             entity.active = false
             system:addEntity(entity)
-            
+
             system:update(0.016)
-            
+
             -- Should not have updated target from game state
             assert.are.equal(0, statDisplay.targetValue)
         end)
@@ -179,8 +179,12 @@ describe("StatDisplay System", function()
     describe("render", function()
         before_each(function()
             -- Mock Love2D graphics functions for render tests
-            love.graphics.getFont = function() return "mockFont" end
-            love.graphics.newFont = function() return "newMockFont" end
+            love.graphics.getFont = function()
+                return "mockFont"
+            end
+            love.graphics.newFont = function()
+                return "newMockFont"
+            end
             love.graphics.setFont = function() end
             love.graphics.setColor = function() end
             love.graphics.print = function() end
@@ -190,11 +194,11 @@ describe("StatDisplay System", function()
             local statDisplay = StatDisplayComponent.new("Test Score", "totalScore", 10, 20, 16, "integer")
             statDisplay.displayedValue = 123.7
             local transform = TransformComponent.new(10, 20)
-            
+
             entity:addComponent("StatDisplay", statDisplay)
             entity:addComponent("Transform", transform)
             system:addEntity(entity)
-            
+
             -- Mock print function to capture output
             local printedText, printedX, printedY
             love.graphics.print = function(text, x, y)
@@ -202,9 +206,9 @@ describe("StatDisplay System", function()
                 printedX = x
                 printedY = y
             end
-            
+
             system:render()
-            
+
             assert.are.equal("Test Score: 123", printedText)
             assert.are.equal(10, printedX)
             assert.are.equal(20, printedY)
@@ -215,12 +219,14 @@ describe("StatDisplay System", function()
             entity:addComponent("StatDisplay", statDisplay)
             -- Missing Transform component
             system:addEntity(entity)
-            
+
             local printCalled = false
-            love.graphics.print = function() printCalled = true end
-            
+            love.graphics.print = function()
+                printCalled = true
+            end
+
             system:render()
-            
+
             assert.is_false(printCalled)
         end)
 
@@ -231,12 +237,14 @@ describe("StatDisplay System", function()
             entity:addComponent("Transform", transform)
             entity.active = false
             system:addEntity(entity)
-            
+
             local printCalled = false
-            love.graphics.print = function() printCalled = true end
-            
+            love.graphics.print = function()
+                printCalled = true
+            end
+
             system:render()
-            
+
             assert.is_false(printCalled)
         end)
     end)
@@ -245,24 +253,24 @@ describe("StatDisplay System", function()
         it("processes multiple stat entities independently", function()
             local entity1 = Entity.new(1)
             local entity2 = Entity.new(2)
-            
+
             local stat1 = StatDisplayComponent.new("Score 1", "totalScore")
             local stat2 = StatDisplayComponent.new("Score 2", "hitCount")
             local transform1 = TransformComponent.new(0, 0)
             local transform2 = TransformComponent.new(0, 20)
-            
+
             entity1:addComponent("StatDisplay", stat1)
             entity1:addComponent("Transform", transform1)
             entity2:addComponent("StatDisplay", stat2)
             entity2:addComponent("Transform", transform2)
-            
+
             system:addEntity(entity1)
             system:addEntity(entity2)
-            
+
             system:update(0.016)
-            
+
             assert.are.equal(150, stat1.targetValue) -- totalScore
-            assert.are.equal(5, stat2.targetValue)   -- hitCount
+            assert.are.equal(5, stat2.targetValue) -- hitCount
         end)
     end)
 end)
