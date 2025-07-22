@@ -4,6 +4,7 @@
 local DotFactory = require("factories.dot_factory")
 local DartboardFactory = require("factories.dart_board_factory")
 local TextFactory = require("factories.text_factory")
+local StatDisplayFactory = require("factories.stat_display_factory")
 
 -- Combined factory interface for backward compatibility
 local EntityFactory = {}
@@ -21,9 +22,16 @@ EntityFactory.createDartBoard = DartboardFactory.createDartBoard
 EntityFactory.createScoreText = TextFactory.createScoreText
 EntityFactory.createText = TextFactory.createText
 
+-- Export stat display factory functions
+EntityFactory.createStatDisplay = StatDisplayFactory.createStatDisplay
+EntityFactory.createTotalScoreDisplay = StatDisplayFactory.createTotalScoreDisplay
+EntityFactory.createHitCountDisplay = StatDisplayFactory.createHitCountDisplay
+EntityFactory.createAverageScoreDisplay = StatDisplayFactory.createAverageScoreDisplay
+
 -- Also export individual factories for direct access if needed
 EntityFactory.Dot = DotFactory
 EntityFactory.Dartboard = DartboardFactory
 EntityFactory.Text = TextFactory
+EntityFactory.StatDisplay = StatDisplayFactory
 
 return EntityFactory

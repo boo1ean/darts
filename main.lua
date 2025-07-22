@@ -84,6 +84,10 @@ function love.load()
     -- Initialize TextSystem with world reference and add it LAST for top rendering
     Systems.TextSystem:init(gameWorld)
     gameWorld:addSystem(Systems.TextSystem)
+    
+    -- Initialize StatDisplaySystem with world reference
+    Systems.StatDisplaySystem:init(gameWorld)
+    gameWorld:addSystem(Systems.StatDisplaySystem)
     print("All systems added to world")
 
     -- Create dart board entity
@@ -93,6 +97,13 @@ function love.load()
     -- Create the initial pulsing dot at a random position
     GameBehavior.spawnNewDot(gameWorld)
     print("Created initial dot")
+
+    -- Create individual stat display entities following SOLID principles
+    local totalScoreEntity = EntityFactory.createTotalScoreDisplay(gameWorld, 20, 20, 16)
+    local hitCountEntity = EntityFactory.createHitCountDisplay(gameWorld, 20, 41, 16)  -- 16 + 5 = 21 spacing
+    local averageScoreEntity = EntityFactory.createAverageScoreDisplay(gameWorld, 20, 62, 16)
+    
+    print("Created stat display entities with IDs:", totalScoreEntity.id, hitCountEntity.id, averageScoreEntity.id)
 
     -- Initialize game time
     gameTime = 0
