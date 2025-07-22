@@ -15,8 +15,9 @@ ECS-based dartboard game built with Love2D. Features moving targets with complex
 
 ## Quick Reference
 ### Common Commands
+- **Comprehensive validation**: `./scripts/validate-all.sh` (all checks in one)
 - Test: `./scripts/test.sh`
-- Lint: `./scripts/lint.sh`  
+- Lint: `./scripts/lint.sh` (use `--fix` to auto-format with stylua)
 - Validate game: `./scripts/validate-game.sh` (silent, for AI agents)
 - Run game: `./scripts/run.sh` (verbose, for development)
 - Start for verification: `./scripts/run-for-verification.sh` (silent, for manual testing)
@@ -30,12 +31,19 @@ ECS-based dartboard game built with Love2D. Features moving targets with complex
 - `main.lua` - System registration order
 
 ## Mandatory Validation Steps
+**Use `./scripts/validate-all.sh` for comprehensive validation, or run individual steps:**
+
 1. **Before any changes**: Run `./scripts/test.sh` to establish baseline
 2. **After implementation**: Run full test suite and fix all failures
-3. **Code quality**: Run `./scripts/lint.sh` and address all issues
+3. **Code quality**: Run `./scripts/lint.sh --fix` to auto-format and address all issues
 4. **Game functionality**: Run `./scripts/validate-game.sh` to verify game works
 5. **Architecture compliance**: Verify ECS patterns are followed
 6. **Documentation**: Run `./scripts/validate-docs.sh` and update affected docs
+
+**Shortcut**: `./scripts/validate-all.sh` runs all validation steps with options:
+- `--skip-tests`: Skip test suite (quick validation)
+- `--skip-game`: Skip game validation (headless environments)
+- `--verbose`: Show detailed output from each step
 
 ## Documentation Maintenance Rules
 AI agents MUST update relevant documentation when making these changes:
@@ -186,6 +194,8 @@ Does this match your extensibility needs?"
 - When unsure about ECS patterns, reference architecture.md first
 - Always validate component/system integration after creation
 - Update documentation concurrently with code changes
+- **MANDATORY**: Always add "Run `./scripts/validate-all.sh`" as final todo item
+- **MANDATORY**: Mark validation todo complete only after all checks pass
 - **NEW**: Always propose architectural alternatives with SOLID principle analysis
 - **NEW**: Design for extension from the start - assume requirements will grow
 - **NEW**: Validate designs with the extensibility test: "How would we add one more?"
@@ -195,6 +205,33 @@ Does this match your extensibility needs?"
 - Components must extend BaseComponent - no exceptions
 - Systems must extend BaseSystem - no exceptions
 - Always use factories for entity creation
+
+## TodoWrite Integration Requirements
+AI agents MUST follow this workflow for ALL non-trivial tasks:
+
+### Mandatory Todo Structure:
+1. **Planning & Analysis** todos (requirements exploration, architectural design)
+2. **Implementation** todos (specific code changes, one per major component/file)
+3. **Testing** todos (write tests, fix failures)
+4. **Documentation** todos (update affected docs in `docs/ai/`)
+5. **FINAL VALIDATION**: "Run `./scripts/validate-all.sh` and fix all issues"
+
+### Validation Todo Rules:
+- The validation todo is **ALWAYS** the last item
+- **NEVER** mark validation complete if any checks fail
+- If validation reveals issues, create new todos to fix them
+- Only mark validation complete when `validate-all.sh` shows "Project is ready for commit/deployment"
+
+### Example Todo Flow:
+```
+1. [pending] Analyze requirements and design architecture
+2. [pending] Implement StatDisplayComponent
+3. [pending] Implement StatDisplaySystem  
+4. [pending] Create factory for stat displays
+5. [pending] Write comprehensive tests
+6. [pending] Update architecture.md with new patterns
+7. [pending] Run ./scripts/validate-all.sh and fix all issues
+```
 
 ## Before Making Changes
 - Read relevant files in `docs/ai/` directory

@@ -72,9 +72,17 @@ Documentation validation pipeline:
 
 ### lint.sh
 Code quality checks:
-- Lua syntax validation
+- **Stylua formatting** (use `--fix` to auto-format)
+- Lua syntax validation with luacheck
 - Undefined variable detection
 - Code style consistency
+- Debug print statement detection
+
+**Options**:
+- `./scripts/lint.sh` - Check formatting and code quality
+- `./scripts/lint.sh --fix` - Auto-format with stylua and check code quality
+
+**AI Agent Usage**: Always use `--fix` option to maintain consistent code formatting
 
 ### setup.sh
 Environment setup:
@@ -93,6 +101,7 @@ Environment setup:
 ./scripts/run.sh
 
 # Before committing
+./scripts/lint.sh --fix
 ./scripts/test.sh
 
 # Create new component
