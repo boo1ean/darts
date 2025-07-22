@@ -29,6 +29,31 @@ function Entity:removeComponent(componentType)
     self.components[componentType] = nil
 end
 
+function Entity:getComponentCount()
+    local count = 0
+    for _ in pairs(self.components) do
+        count = count + 1
+    end
+    return count
+end
+
+function Entity:hasComponents(componentTypes)
+    for _, componentType in ipairs(componentTypes) do
+        if not self:hasComponent(componentType) then
+            return false
+        end
+    end
+    return true
+end
+
+function Entity:deactivate()
+    self.active = false
+end
+
+function Entity:activate()
+    self.active = true
+end
+
 function Entity:destroy()
     self.active = false
     self.components = {}

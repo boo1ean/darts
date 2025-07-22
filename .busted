@@ -1,0 +1,15 @@
+return {
+    -- Default configuration for busted
+    default = {
+        ROOT = {"tests"},
+        pattern = "_spec",
+        exclude = {
+            "fixtures/",
+            "helpers/"
+        },
+        verbose = true,
+        coverage = false,
+        output = "gtest",
+        lpath = "./?.lua;./?/init.lua"
+    }
+}

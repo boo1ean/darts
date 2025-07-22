@@ -92,6 +92,14 @@ files["main.lua"] = {
     allow_defined_top = true,
 }
 
+-- Test file patterns
+files["tests/**/*_spec.lua"] = {
+    read_globals = {
+        "describe", "it", "before_each", "after_each", "setup", "teardown",
+        "assert", "spy", "stub", "mock", "pending"
+    }
+}
+
 files["**/*Test.lua"] = {
     -- Test files might have different rules
     ignore = {"111", "112", "113"}, -- Allow globals in tests
