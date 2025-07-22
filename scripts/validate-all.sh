@@ -215,7 +215,7 @@ TOTAL_ISSUES=0
 if [ "$SKIP_TESTS" = false ]; then
     if [ -f ".tmp/validation-tests.log" ]; then
         # Look for test failures, not log messages that contain "error"
-        TEST_FAILURES=$(grep -c "FAILED\|failures:" .tmp/validation-tests.log 2>/dev/null || echo 0)
+        TEST_FAILURES=$(grep -c "FAILED\|failures:" .tmp/validation-tests.log 2>/dev/null | head -1 || echo 0)
         # Check the final status line for failure indicators
         if grep -q "✗\|failures\|FAILED" .tmp/validation-tests.log 2>/dev/null; then
             ((TOTAL_ISSUES += 1))
@@ -223,7 +223,7 @@ if [ "$SKIP_TESTS" = false ]; then
     fi
 else
     if [ -f ".tmp/validation-lint.log" ]; then
-        LINT_ERRORS=$(grep -c "warning\|error" .tmp/validation-lint.log 2>/dev/null || echo 0)
+        LINT_ERRORS=$(grep -c "warning\|error" .tmp/validation-lint.log 2>/dev/null | head -1 || echo 0)
         if [ "$LINT_ERRORS" -gt 0 ]; then
             ((TOTAL_ISSUES += LINT_ERRORS))
         fi
@@ -231,7 +231,7 @@ else
 fi
 
 if [ "$SKIP_GAME" = false ] && [ -f ".tmp/validation-game.log" ]; then
-    GAME_ERRORS=$(grep -c "Error\|FAILED" .tmp/validation-game.log 2>/dev/null || echo 0)
+    GAME_ERRORS=$(grep -c "Error\|FAILED" .tmp/validation-game.log 2>/dev/null | head -1 || echo 0)
     if [ "$GAME_ERRORS" -gt 0 ]; then
         ((TOTAL_ISSUES += GAME_ERRORS))
     fi
