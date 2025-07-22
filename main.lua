@@ -7,7 +7,7 @@ local defaultErrorHandler = love.errorhandler or love.errhand
 
 -- Love2D's error printer function
 local function error_printer(msg, layer)
-    print((debug.traceback("Error: " .. tostring(msg), 1+(layer or 1)):gsub("\n[^\n]+$", "")))
+    print((debug.traceback("Error: " .. tostring(msg), 1 + (layer or 1)):gsub("\n[^\n]+$", "")))
 end
 
 -- Custom error handler for AI validation vs user interaction
@@ -31,7 +31,7 @@ function love.errorhandler(msg)
     end
 end
 
--- Load ECS modules  
+-- Load ECS modules
 local World = require("ecs.world")
 local Systems = require("ecs.system")
 local EntityFactory = require("factories")
@@ -54,7 +54,6 @@ function love.load()
     -- Initialize ECS world
     gameWorld = World.new()
     print("World created")
-    
 
     -- Load background image
     backgroundImage = love.graphics.newImage("assets/board.png")
@@ -84,7 +83,7 @@ function love.load()
     -- Initialize TextSystem with world reference and add it LAST for top rendering
     Systems.TextSystem:init(gameWorld)
     gameWorld:addSystem(Systems.TextSystem)
-    
+
     -- Initialize StatDisplaySystem with world reference
     Systems.StatDisplaySystem:init(gameWorld)
     gameWorld:addSystem(Systems.StatDisplaySystem)
@@ -100,9 +99,9 @@ function love.load()
 
     -- Create individual stat display entities following SOLID principles
     local totalScoreEntity = EntityFactory.createTotalScoreDisplay(gameWorld, 20, 20, 16)
-    local hitCountEntity = EntityFactory.createHitCountDisplay(gameWorld, 20, 41, 16)  -- 16 + 5 = 21 spacing
+    local hitCountEntity = EntityFactory.createHitCountDisplay(gameWorld, 20, 41, 16) -- 16 + 5 = 21 spacing
     local averageScoreEntity = EntityFactory.createAverageScoreDisplay(gameWorld, 20, 62, 16)
-    
+
     print("Created stat display entities with IDs:", totalScoreEntity.id, hitCountEntity.id, averageScoreEntity.id)
 
     -- Initialize game time

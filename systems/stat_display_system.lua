@@ -72,11 +72,8 @@ function StatDisplaySystem:render()
                 love.graphics.setColor(r, g, b, a)
 
                 -- Format value based on type
-                local formattedValue = self:formatValue(
-                    statDisplay.displayedValue,
-                    statDisplay.format,
-                    statDisplay.decimalPlaces
-                )
+                local formattedValue =
+                    self:formatValue(statDisplay.displayedValue, statDisplay.format, statDisplay.decimalPlaces)
 
                 -- Create display text
                 local displayText = statDisplay.label .. ": " .. formattedValue
