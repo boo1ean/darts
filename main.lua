@@ -2,8 +2,8 @@
 -- MAIN GAME FILE - ECS ARCHITECTURE
 -- =============================================================================
 
--- Save the default Love2D error handler
-local defaultErrorHandler = love.errorhandler
+-- Save the default Love2D error handler (Love2D's fallback mechanism)
+local defaultErrorHandler = love.errorhandler or love.errhand
 
 -- Love2D's error printer function
 local function error_printer(msg, layer)
@@ -20,8 +20,14 @@ function love.errorhandler(msg)
         error_printer(msg, 1)
         os.exit(1)
     else
-        -- User mode: use the default Love2D error handler
-        return defaultErrorHandler(msg)
+        -- User mode: use the default Love2D error handler if available
+        if defaultErrorHandler then
+            return defaultErrorHandler(msg)
+        else
+            -- Fallback: just print error and don't exit (let Love2D handle it)
+            error_printer(msg, 1)
+            -- Don't call os.exit() - let Love2D show its error screen
+        end
     end
 end
 
