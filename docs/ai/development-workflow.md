@@ -24,17 +24,127 @@ This document describes the complete development workflow for AI agents working 
 ## Development Cycle
 
 ### Phase 1: Planning
-1. **Understand the requirement**
+
+#### 1. Gather Complete Requirements
+**CRITICAL**: AI agents MUST ask clarifying questions before implementing any functionality. Never assume or guess requirements.
+
+**Standard Clarification Process:**
+Ask questions until you have clear understanding of:
+- **Exact behavior** - What should happen step by step?
+- **Visual appearance** - How should it look to the user?
+- **Interaction patterns** - How does user interact with it?
+- **Integration points** - How does it fit with existing systems?
+- **Edge cases** - What happens in unusual situations?
+- **Performance requirements** - Any speed/memory constraints?
+
+**Required Questions for New Features:**
+```
+I need to understand the exact requirements before implementing [feature name].
+
+Please clarify:
+1. **Behavior**: What should happen when [specific action occurs]?
+2. **Visuals**: How should this appear on screen? (colors, size, position, animations)
+3. **User interaction**: How does the user trigger/control this feature?
+4. **Integration**: How should this work with existing [relevant systems]?
+5. **Edge cases**: What should happen if [specific scenario]?
+6. **Success criteria**: How will you know this is working correctly?
+```
+
+**Feature-Specific Question Templates:**
+
+*Visual Effects:*
+- What colors, size, and position?
+- Should it animate? If so, how (fade, slide, bounce)?
+- How long should it be visible?
+- Should it block other interactions?
+
+*Game Mechanics:*
+- What triggers the behavior?
+- What are the exact rules or calculations?
+- How does it affect scoring or gameplay?
+- Should it be configurable?
+
+*UI Elements:*
+- Where should it appear on screen?
+- What information should it display?
+- How should users interact with it?
+- Should it be persistent or temporary?
+
+*Movement/Physics:*
+- What type of movement pattern?
+- Speed and direction parameters?
+- Should it respond to collisions?
+- Any constraints or boundaries?
+
+#### Examples of Good Clarification Conversations
+
+**Example 1: Vague Request**
+```
+User: "Add power-ups to the game"
+Agent: "I need to understand the exact requirements before implementing power-ups.
+
+Please clarify:
+1. **Behavior**: What should power-ups do when collected? (speed boost, extra points, etc.)
+2. **Visuals**: How should they appear? (shapes, colors, size, glow effects?)
+3. **User interaction**: How does the player collect them? (dart hits them, automatic on proximity?)
+4. **Integration**: Should they spawn randomly or at specific times/locations?
+5. **Edge cases**: What if multiple power-ups are collected at once?
+6. **Success criteria**: How will you know this is working correctly?"
+```
+
+**Example 2: Implementation Detail Questions**
+```
+User: "Make the dartboard shake when hit"
+Agent: "I can add dartboard shake on hit. To implement this correctly:
+
+1. **Behavior**: Should shake intensity vary based on hit strength or dart type?
+2. **Visuals**: How intense should the shake be (subtle vibration vs dramatic shake)?
+3. **Duration**: How long should the shake last?
+4. **Integration**: Should it affect dart physics while shaking, or just visual?
+5. **Edge cases**: What if multiple darts hit during the shake?
+6. **Success criteria**: Should it shake for every hit or only certain scoring areas?"
+```
+
+**Example 3: Follow-up Questions**
+```
+User: "Add a scoring multiplier effect"
+Agent: "I need more details about the multiplier effect:
+
+1. **Trigger**: What activates the multiplier? (consecutive hits, specific targets, time-based?)
+2. **Visual feedback**: How should players know multiplier is active? (text, color changes, animations?)
+3. **Multiplier value**: What's the multiplication factor? (2x, 3x, variable?)
+4. **Duration**: How long does it last?
+5. **Stacking**: Can multiple multipliers stack or do they reset each other?
+6. **Integration**: Does it apply to all scoring or specific dart types?"
+
+User: "Consecutive hits in the bullseye, 2x multiplier, shows golden glow around dartboard"
+Agent: "Thanks! A few more details:
+
+1. How many consecutive bullseye hits trigger it?
+2. How long should the golden glow last?
+3. Should the multiplier reset after one non-bullseye hit?
+4. Should there be a sound effect when activated?"
+```
+
+**Key Principles:**
+- **Never assume** - Always ask rather than guess
+- **Be specific** - Ask about exact behavior, not general concepts
+- **Think edge cases** - Consider unusual situations
+- **Ask for success criteria** - How will you know it's working?
+- **Iterate** - Ask follow-up questions as needed
+
+#### 2. Understand the requirement
    - Read user request carefully
+   - **Ask clarifying questions** until all ambiguity is resolved
    - Identify scope and complexity
    - Determine if it's a feature, bug fix, or refactor
 
-2. **Research existing code**
+#### 3. Research existing code
    - Search for similar implementations
    - Identify affected systems/components
    - Check for existing patterns to follow
 
-3. **Plan approach**
+#### 4. Plan approach
    - Determine if new components/systems are needed
    - Identify integration points
    - Consider testing strategy
@@ -116,8 +226,10 @@ This document describes the complete development workflow for AI agents working 
 ### Before Starting Work
 - [ ] All tests pass (`./scripts/test.sh`)
 - [ ] No linting errors (`./scripts/lint.sh`)
-- [ ] Understanding of requirement is clear
+- [ ] **ALL clarifying questions have been asked and answered**
+- [ ] Understanding of requirement is clear and specific
 - [ ] Relevant documentation has been read
+- [ ] Success criteria are defined
 
 ### During Development
 - [ ] Changes follow ECS architecture
@@ -218,6 +330,86 @@ This document describes the complete development workflow for AI agents working 
 - Provide steps to reproduce
 - Share current git state
 - Include output of test and lint scripts
+
+### Manual Verification Requests
+
+AI agents should request manual verification from users in these situations:
+
+#### When to Request Manual Verification
+1. **Visual/gameplay changes** that cannot be fully tested via automated scripts
+2. **Complex behavioral changes** where automated tests may miss edge cases  
+3. **Performance-sensitive modifications** that require human judgment
+4. **User experience improvements** where subjective evaluation is needed
+5. **After fixing critical bugs** that could have subtle side effects
+6. **Before completing major feature implementations**
+
+#### How to Request Manual Verification
+
+**Standard Request Format:**
+```
+Manual verification needed for [specific change/feature].
+
+Starting game for verification...
+
+Please test the following:
+- [Specific behavior 1 to verify]
+- [Specific behavior 2 to verify]
+- [Any edge cases to check]
+
+Steps to verify:
+1. [Exact steps user should follow in the running game]
+2. [Expected outcome at each step]
+3. [What to look for that indicates success]
+```
+
+**Example Request:**
+```
+Manual verification needed for dart physics improvements.
+
+Starting game for verification...
+
+Please test the following:
+- Darts stick properly to dartboard
+- Bounce behavior feels realistic
+- Score detection works accurately
+- Visual feedback is smooth
+
+Steps to verify:
+1. Throw several darts at different dartboard sections
+2. Verify darts stick and don't fall through
+3. Check that scores appear correctly and promptly
+4. Look for any visual glitches or jerky animations
+
+Expected: Smooth, realistic dart physics with accurate scoring.
+```
+
+#### AI Agent Implementation
+When requesting manual verification, AI agents should:
+1. **Automatically start the game** using `./scripts/run-for-verification.sh`
+   - This script starts the game silently without polluting agent context
+   - Logs are redirected to `.tmp/verification_game.log`
+   - Only shows success/failure status to agent
+2. **Provide clear testing instructions** while game is running
+3. **Wait for user feedback** before proceeding
+4. **Stop the game when done** using `./scripts/stop-verification.sh`
+
+#### Manual Verification Script Usage
+```bash
+# AI agent starts game for verification (minimal output)
+./scripts/run-for-verification.sh
+
+# User tests the running game...
+
+# AI agent stops game when verification complete
+./scripts/stop-verification.sh
+```
+
+#### What NOT to Request Manual Verification For
+- Changes covered by automated tests (unless they affect UX)
+- Simple data/logic changes with no visual component
+- Internal refactoring that doesn't change behavior
+- Documentation updates
+- Code formatting/style changes
 
 ### Completion Verification
 - Confirm all quality gates passed

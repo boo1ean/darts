@@ -7,6 +7,8 @@ All project interactions should be done through scripts in the `scripts/` direct
 ### Core Operations
 - `./scripts/run.sh` - Run the game (interactive, verbose output)
 - `./scripts/validate-game.sh` - Silent game validation for AI agents
+- `./scripts/run-for-verification.sh` - Start game silently for manual verification
+- `./scripts/stop-verification.sh` - Stop verification game
 - `./scripts/test.sh` - Run all tests and checks
 - `./scripts/lint.sh` - Static code analysis
 - `./scripts/setup.sh` - Install dependencies
@@ -34,6 +36,23 @@ Silent game validation designed for AI agents:
 4. Automatically terminates game process
 5. Returns clean exit codes without debug pollution
 **Output**: Minimal status messages only, no debug logs
+
+### run-for-verification.sh
+Start game silently for manual verification by AI agents:
+1. Redirects all game output to `.tmp/verification_game.log`
+2. Stores process ID in `.tmp/verification_game.pid`
+3. Performs basic startup validation
+4. Leaves game running for user interaction
+5. Minimal output to avoid polluting agent context
+**Use case**: When AI agents need users to manually test game functionality
+
+### stop-verification.sh
+Stop verification game cleanly:
+1. Reads PID from `.tmp/verification_game.pid`
+2. Gracefully terminates game process
+3. Force kills if necessary
+4. Cleans up temporary files
+**Use case**: AI agents call this after manual verification is complete
 
 ### test.sh
 Comprehensive testing pipeline:

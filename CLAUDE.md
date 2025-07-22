@@ -19,6 +19,8 @@ ECS-based dartboard game built with Love2D. Features moving targets with complex
 - Lint: `./scripts/lint.sh`  
 - Validate game: `./scripts/validate-game.sh` (silent, for AI agents)
 - Run game: `./scripts/run.sh` (verbose, for development)
+- Start for verification: `./scripts/run-for-verification.sh` (silent, for manual testing)
+- Stop verification: `./scripts/stop-verification.sh`
 - New component: `./scripts/new-component.sh <name>`
 - New system: `./scripts/new-system.sh <name>`
 
@@ -46,7 +48,10 @@ AI agents MUST update relevant documentation when making these changes:
 
 See `docs/ai/documentation-maintenance.md` for complete guidelines.
 
-## AI Agent Error Handling
+## AI Agent Requirements
+- **CRITICAL**: Ask clarifying questions before implementing ANY functionality
+- Never assume or guess requirements - always ask for specifics
+- Get clear answers on behavior, visuals, interactions, and edge cases
 - Never ignore test failures - fix or ask for guidance
 - If scripts fail, check dependencies before proceeding
 - When unsure about ECS patterns, reference architecture.md first
